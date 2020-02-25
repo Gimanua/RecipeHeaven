@@ -11,12 +11,15 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.LinkedList;
 import java.util.List;
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import nu.te4.recipeheaven.ConnectionFactory;
 import nu.te4.recipeheaven.entities.Category;
 import nu.te4.recipeheaven.entities.Category.CategoryBuilder;
 import nu.te4.recipeheaven.entities.Recipe;
 import nu.te4.recipeheaven.entities.Recipe.RecipeBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -24,46 +27,39 @@ import nu.te4.recipeheaven.entities.Recipe.RecipeBuilder;
  */
 @Stateless
 public class RecipeBean {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(RecipeBean.class);
+
+    @EJB
+    private CategoryBean categoryBean;
     
-    public Recipe getRecipe(int id){
-        
-        try (Connection connection = ConnectionFactory.getConnection()){
-            String sql = "{call complete_recipe(?)}";
-            CallableStatement stmt = connection.prepareCall(sql);
-            stmt.setInt(1, id);
-            
-            stmt.execute();
-            
-            ResultSet recipeData = stmt.getResultSet();
-            RecipeBuilder recipeBuilder = new RecipeBuilder();
-            if(recipeData != null && recipeData.next()){
-                recipeBuilder.id(recipeData.getInt("recipe_id"));
-                recipeBuilder.likes(recipeData.getInt("likes"));
-                recipeBuilder.name(recipeData.getString("name"));
-                recipeBuilder.posterUsername(recipeData.getString("poster_username"));
-                recipeBuilder.image(recipeData.getString("image"));
-                recipeBuilder.description(recipeData.getString("description"));
-            }
-            
-            stmt.getMoreResults();
-            
-            ResultSet categoryData = stmt.getResultSet();
-            List<Category> categories = new LinkedList();
-            if(categoryData != null){
-                while(categoryData.next()){
-                    CategoryBuilder categoryBuilder = new CategoryBuilder();
-                    categoryBuilder.id(categoryData.getInt("category_id"));
-                    categoryBuilder.name(categoryData.getString("category_name"));
-                    categories.add(categoryBuilder.build());
-                }
-            }
-            recipeBuilder.categories(categories);
-            
-            return recipeBuilder.build();
-        } catch (SQLException e) {
-            System.out.println("RecipeBean.getRecipe: " + e.getMessage());
+    public Recipe getRecipe(int id) throws IllegalArgumentException, SQLException {
+
+        Connection connection = ConnectionFactory.getConnection();
+        CallableStatement stmt = connection.prepareCall("{call complete_recipe(?)}");
+        stmt.setInt(1, id);
+
+        if (!stmt.execute()) {
+            throw new IllegalArgumentException("The id '" + id + "' gave no recipe result.");
         }
-        
-        return null;
+
+        RecipeBuilder recipeBuilder = insertRecipeInfo(stmt.getResultSet());
+        stmt.getMoreResults();
+        List<Category> categories = categoryBean.getCategories(stmt.getResultSet());
+        stmt.getMoreResults();
+
+        recipeBuilder = recipeBuilder.categories(categories);
+        return recipeBuilder.build();
+    }
+
+    private RecipeBuilder insertRecipeInfo(ResultSet recipeData) throws SQLException {
+        recipeData.next();
+        return new RecipeBuilder()
+                .id(recipeData.getInt("recipe_id"))
+                .likes(recipeData.getInt("likes"))
+                .name(recipeData.getString("name"))
+                .posterUsername(recipeData.getString("poster_username"))
+                .image(recipeData.getString("image"))
+                .description(recipeData.getString("description"));
     }
 }

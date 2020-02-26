@@ -6,12 +6,14 @@
 package nu.te4.recipeheaven.entities;
 
 import java.util.List;
+import nu.te4.recipeheaven.building.Rebuildable;
+import nu.te4.recipeheaven.entities.Recipe.RecipeBuilder;
 
 /**
  *
  * @author Adrian Klasson
  */
-public final class Recipe {
+public final class Recipe implements Rebuildable<RecipeBuilder>{
 
     private final Integer id;
     private final Integer likes;
@@ -81,6 +83,22 @@ public final class Recipe {
 
     public List<Reply> getReplies() {
         return replies;
+    }
+
+    @Override
+    public RecipeBuilder rebuild() {
+        return new RecipeBuilder()
+                .categories(categories)
+                .comments(comments)
+                .description(description)
+                .id(id)
+                .image(image)
+                .ingredients(ingredients)
+                .instructions(instructions)
+                .likes(likes)
+                .name(name)
+                .posterUsername(posterUsername)
+                .replies(replies);
     }
 
     public static final class RecipeBuilder {

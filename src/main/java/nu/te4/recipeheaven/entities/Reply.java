@@ -5,11 +5,14 @@
  */
 package nu.te4.recipeheaven.entities;
 
+import nu.te4.recipeheaven.building.Rebuildable;
+import nu.te4.recipeheaven.entities.Reply.ReplyBuilder;
+
 /**
  *
  * @author Adrian Klasson
  */
-public final class Reply {
+public final class Reply implements Rebuildable<ReplyBuilder>{
 
     private final Integer commentId;
     private final String reply;
@@ -31,6 +34,14 @@ public final class Reply {
 
     public String getPosterUsername() {
         return posterUsername;
+    }
+
+    @Override
+    public ReplyBuilder rebuild() {
+        return new ReplyBuilder()
+                .commentId(commentId)
+                .posterUsername(posterUsername)
+                .reply(reply);
     }
 
     public static final class ReplyBuilder {

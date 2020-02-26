@@ -5,11 +5,14 @@
  */
 package nu.te4.recipeheaven.entities;
 
+import nu.te4.recipeheaven.building.Rebuildable;
+import nu.te4.recipeheaven.entities.Instruction.InstructionBuilder;
+
 /**
  *
  * @author Adrian Klasson
  */
-public final class Instruction {
+public final class Instruction implements Rebuildable<InstructionBuilder>{
 
     private final Integer orderIndex;
     private final String description;
@@ -25,6 +28,13 @@ public final class Instruction {
 
     public String getDescription() {
         return description;
+    }
+
+    @Override
+    public InstructionBuilder rebuild() {
+        return new InstructionBuilder()
+                .description(description)
+                .orderIndex(orderIndex);
     }
 
     public static final class InstructionBuilder {

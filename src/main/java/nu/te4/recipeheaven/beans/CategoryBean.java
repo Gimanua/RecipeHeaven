@@ -24,7 +24,7 @@ public class CategoryBean {
         List<Category> categories = new LinkedList();
         while (categoryData.next()) {
             CategoryBuilder categoryBuilder = new CategoryBuilder()
-                    .id(categoryData.getInt("category_id"))
+                    .categoryId(categoryData.getInt("category_id"))
                     .name(categoryData.getString("category_name"));
             categories.add(categoryBuilder.build());
         }

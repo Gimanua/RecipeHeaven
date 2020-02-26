@@ -5,11 +5,14 @@
  */
 package nu.te4.recipeheaven.entities;
 
+import nu.te4.recipeheaven.building.Rebuildable;
+import nu.te4.recipeheaven.entities.Comment.CommentBuilder;
+
 /**
  *
  * @author Adrian Klasson
  */
-public final class Comment {
+public final class Comment implements Rebuildable<CommentBuilder>{
 
     private final Integer commentId;
     private final String comment;
@@ -31,6 +34,14 @@ public final class Comment {
 
     public String getPosterUsername() {
         return posterUsername;
+    }
+
+    @Override
+    public CommentBuilder rebuild() {
+        return new CommentBuilder()
+                .comment(comment)
+                .commentId(commentId)
+                .posterUsername(posterUsername);
     }
 
     public static final class CommentBuilder {

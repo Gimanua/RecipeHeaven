@@ -5,11 +5,14 @@
  */
 package nu.te4.recipeheaven.entities;
 
+import nu.te4.recipeheaven.building.Rebuildable;
+import nu.te4.recipeheaven.entities.Ingredient.IngredientBuilder;
+
 /**
  *
  * @author Adrian Klasson
  */
-public final class Ingredient {
+public final class Ingredient implements Rebuildable<IngredientBuilder>{
 
     private final Integer ingredientId;
     private final Double amount;
@@ -43,6 +46,16 @@ public final class Ingredient {
 
     public String getName() {
         return name;
+    }
+
+    @Override
+    public IngredientBuilder rebuild() {
+        return new IngredientBuilder()
+                .amount(amount)
+                .ingredientId(ingredientId)
+                .name(name)
+                .unitAbbreviation(unitAbbreviation)
+                .unitName(unitName);
     }
 
     public static final class IngredientBuilder {

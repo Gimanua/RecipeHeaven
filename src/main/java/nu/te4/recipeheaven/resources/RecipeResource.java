@@ -40,6 +40,7 @@ public class RecipeResource {
         } catch (IllegalArgumentException ex) {
             return Response.status(Response.Status.NOT_FOUND).build();
         } catch (SQLException ex) {
+            LOGGER.error("Failed to retrieve data: {}", ex.getMessage());
             return Response.status(Response.Status.SERVICE_UNAVAILABLE).build();
         }
     }

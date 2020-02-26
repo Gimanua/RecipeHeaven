@@ -9,15 +9,17 @@ import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.LinkedList;
 import java.util.List;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import nu.te4.recipeheaven.ConnectionFactory;
 import nu.te4.recipeheaven.entities.Category;
-import nu.te4.recipeheaven.entities.Category.CategoryBuilder;
+import nu.te4.recipeheaven.entities.Comment;
+import nu.te4.recipeheaven.entities.Ingredient;
+import nu.te4.recipeheaven.entities.Instruction;
 import nu.te4.recipeheaven.entities.Recipe;
 import nu.te4.recipeheaven.entities.Recipe.RecipeBuilder;
+import nu.te4.recipeheaven.entities.Reply;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,6 +35,18 @@ public class RecipeBean {
     @EJB
     private CategoryBean categoryBean;
     
+    @EJB
+    private IngredientBean ingredientBean;
+    
+    @EJB
+    private InstructionBean instructionBean;
+    
+    @EJB
+    private CommentBean commentBean;
+    
+    @EJB
+    private ReplyBean replyBean;
+    
     public Recipe getRecipe(int id) throws IllegalArgumentException, SQLException {
 
         Connection connection = ConnectionFactory.getConnection();
@@ -47,8 +61,19 @@ public class RecipeBean {
         stmt.getMoreResults();
         List<Category> categories = categoryBean.getCategories(stmt.getResultSet());
         stmt.getMoreResults();
-
-        recipeBuilder = recipeBuilder.categories(categories);
+        List<Ingredient> ingredients = ingredientBean.getIngredients(stmt.getResultSet());
+        stmt.getMoreResults();
+        List<Instruction> instructions = instructionBean.getInstructions(stmt.getResultSet());
+        stmt.getMoreResults();
+        List<Comment> comments = commentBean.getComments(stmt.getResultSet());
+        stmt.getMoreResults();
+        List<Reply> replies = replyBean.getReplies(stmt.getResultSet());
+        
+        recipeBuilder = recipeBuilder.categories(categories)
+                .ingredients(ingredients)
+                .instructions(instructions)
+                .comments(comments)
+                .replies(replies);
         return recipeBuilder.build();
     }
 

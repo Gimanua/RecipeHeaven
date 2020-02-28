@@ -7,8 +7,10 @@ package nu.te4.recipeheaven.beans;
 
 import java.sql.CallableStatement;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.LinkedList;
 import java.util.List;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -75,6 +77,25 @@ public class RecipeBean {
                 .comments(comments)
                 .replies(replies);
         return recipeBuilder.build();
+    }
+    
+    public List<Recipe> getBriefRecipes(int numberOfRecipes) throws SQLException{
+        Connection connection = ConnectionFactory.getConnection();
+        PreparedStatement stmt = connection.prepareStatement("SELECT * FROM recipe_info ORDER BY likes DESC LIMIT ?");
+        stmt.setInt(1, numberOfRecipes);
+        ResultSet briefRecipesData = stmt.executeQuery();
+        List<Recipe> recipes = new LinkedList();
+        while(briefRecipesData.next()){
+            RecipeBuilder builder = new RecipeBuilder()
+                    .id(briefRecipesData.getInt("recipe_id"))
+                    .likes(briefRecipesData.getInt("likes"))
+                    .name(briefRecipesData.getString("name"))
+                    .posterUsername(briefRecipesData.getString("poster_username"))
+                    .image(briefRecipesData.getString("image"))
+                    .description(briefRecipesData.getString("description"));
+            recipes.add(builder.build());
+        }
+        return recipes;
     }
 
     private RecipeBuilder insertRecipeInfo(ResultSet recipeData) throws SQLException {

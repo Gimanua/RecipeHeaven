@@ -6,6 +6,8 @@
 package nu.te4.recipeheaven.resources;
 
 import java.sql.SQLException;
+import java.util.List;
+import java.util.logging.Level;
 import javax.ejb.EJB;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -22,7 +24,8 @@ import org.slf4j.LoggerFactory;
  *
  * @author Adrian Klasson
  */
-@Path("recipe")
+@Produces(MediaType.APPLICATION_JSON)
+@Path("")
 public class RecipeResource {
     
     private static final Logger LOGGER = LoggerFactory.getLogger(RecipeResource.class);
@@ -31,14 +34,25 @@ public class RecipeResource {
     private RecipeBean recipeBean;
     
     @GET
-    @Path("{id}")
-    @Produces(MediaType.APPLICATION_JSON)
+    @Path("recipe/{id}")
     public Response getRecipe(@PathParam("id") int id){
         try {
             Recipe recipe = recipeBean.getRecipe(id);
             return Response.ok(recipe).build();
         } catch (IllegalArgumentException ex) {
             return Response.status(Response.Status.NOT_FOUND).build();
+        } catch (SQLException ex) {
+            LOGGER.error("Failed to retrieve data: {}", ex.getMessage());
+            return Response.status(Response.Status.SERVICE_UNAVAILABLE).build();
+        }
+    }
+    
+    @GET
+    @Path("briefRecipes/{numberOfRecipes}")
+    public Response getBriefRecipes(@PathParam("numberOfRecipes") int numberOfRecipes){
+        try {
+            List<Recipe> recipes = recipeBean.getBriefRecipes(numberOfRecipes);
+            return Response.ok(recipes).build();
         } catch (SQLException ex) {
             LOGGER.error("Failed to retrieve data: {}", ex.getMessage());
             return Response.status(Response.Status.SERVICE_UNAVAILABLE).build();

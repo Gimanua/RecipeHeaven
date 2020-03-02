@@ -1,10 +1,8 @@
 import React from 'react';
-import NavigationBar from './NavigationBar';
 
-export default function Index(props){
+export default function Home(props){
     return (
         <>
-            <NavigationBar currentPage="home" />
             <h1 className="is-size-1 has-text-centered has-text-white">Recept Himlen</h1>
             <p className="has-text-centered has-text-white">
                 Lorem ipsum, dolor sit amet consectetur adipisicing elit. 

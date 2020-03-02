@@ -22,6 +22,7 @@ import nu.te4.recipeheaven.entities.Instruction;
 import nu.te4.recipeheaven.entities.Recipe;
 import nu.te4.recipeheaven.entities.Recipe.RecipeBuilder;
 import nu.te4.recipeheaven.entities.Reply;
+import nu.te4.recipeheaven.exceptions.InvalidDataException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -101,11 +102,37 @@ public class RecipeBean {
     private RecipeBuilder insertRecipeInfo(ResultSet recipeData) throws SQLException {
         recipeData.next();
         return new RecipeBuilder()
-                .id(recipeData.getInt("recipe_id"))
                 .likes(recipeData.getInt("likes"))
                 .name(recipeData.getString("name"))
                 .posterUsername(recipeData.getString("poster_username"))
                 .image(recipeData.getString("image"))
                 .description(recipeData.getString("description"));
+    }
+
+    public void postRecipe(Recipe recipe) throws SQLException, InvalidDataException {
+        if(!isPostable(recipe)){
+            throw new InvalidDataException("The Recipe is Ill-formatted!");
+        }
+        
+        String sql = "INSERT INTO recipes (user_id, image, name, description) VALUES (?, ?, ?, ?)";
+        PreparedStatement stmt = ConnectionFactory.getConnection().prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS);
+        stmt.setInt(1, recipe.getUserId());
+        stmt.setString(2, recipe.getImage());
+        stmt.setString(3, recipe.getName());
+        stmt.setString(4, recipe.getDescription());
+        stmt.executeUpdate();
+        ResultSet keys = stmt.getGeneratedKeys();
+        if(keys.next()){
+            int id = keys.getInt(1);
+            recipe.setId(id);
+        }
+    }
+    
+    private boolean isPostable(Recipe recipe){
+        return (recipe.getUserId() != null && recipe.getName() != null && recipe.getImage() != null && recipe.getDescription() != null
+                && recipe.getCategories() != null && !recipe.getCategories().isEmpty() 
+                && recipe.getIngredients() != null && !recipe.getIngredients().isEmpty()
+                && recipe.getInstructions() != null & !recipe.getInstructions().isEmpty()
+                );
     }
 }

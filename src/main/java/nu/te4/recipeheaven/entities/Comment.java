@@ -14,14 +14,30 @@ import nu.te4.recipeheaven.entities.Comment.CommentBuilder;
  */
 public final class Comment implements Rebuildable<CommentBuilder>{
 
-    private final Integer commentId;
-    private final String comment;
-    private final String posterUsername;
+    private Integer commentId;
+    private String comment;
+    private String posterUsername;
 
-    private Comment(CommentBuilder builder) {
+    public Comment(){
+        
+    }
+    
+    public Comment(CommentBuilder builder) {
         this.commentId = builder.commentId;
         this.comment = builder.comment;
         this.posterUsername = builder.posterUsername;
+    }
+
+    public void setCommentId(Integer commentId) {
+        this.commentId = commentId;
+    }
+
+    public void setComment(String comment) {
+        this.comment = comment;
+    }
+
+    public void setPosterUsername(String posterUsername) {
+        this.posterUsername = posterUsername;
     }
 
     public Integer getCommentId() {
@@ -46,32 +62,23 @@ public final class Comment implements Rebuildable<CommentBuilder>{
 
     public static final class CommentBuilder {
 
-        private final Integer commentId;
-        private final String comment;
-        private final String posterUsername;
-
-        public CommentBuilder() {
-            this.commentId = null;
-            this.comment = null;
-            this.posterUsername = null;
-        }
-
-        private CommentBuilder(Integer commentId, String comment, String posterUsername) {
-            this.commentId = commentId;
-            this.comment = comment;
-            this.posterUsername = posterUsername;
-        }
+        private Integer commentId;
+        private String comment;
+        private String posterUsername;
         
         public CommentBuilder commentId(Integer commentId){
-            return new CommentBuilder(commentId, comment, posterUsername);
+            this.commentId = commentId;
+            return this;
         }
         
         public CommentBuilder comment(String comment){
-            return new CommentBuilder(commentId, comment, posterUsername);
+            this.comment = comment;
+            return this;
         }
         
         public CommentBuilder posterUsername(String posterUsername){
-            return new CommentBuilder(commentId, comment, posterUsername);
+            this.posterUsername = posterUsername;
+            return this;
         }
         
         public Comment build(){

@@ -14,14 +14,30 @@ import nu.te4.recipeheaven.entities.Reply.ReplyBuilder;
  */
 public final class Reply implements Rebuildable<ReplyBuilder>{
 
-    private final Integer commentId;
-    private final String reply;
-    private final String posterUsername;
+    private Integer commentId;
+    private String reply;
+    private String posterUsername;
 
-    private Reply(ReplyBuilder builder) {
+    public Reply(){
+        
+    }
+    
+    public Reply(ReplyBuilder builder) {
         this.commentId = builder.commentId;
         this.reply = builder.reply;
         this.posterUsername = builder.posterUsername;
+    }
+
+    public void setCommentId(Integer commentId) {
+        this.commentId = commentId;
+    }
+
+    public void setReply(String reply) {
+        this.reply = reply;
+    }
+
+    public void setPosterUsername(String posterUsername) {
+        this.posterUsername = posterUsername;
     }
 
     public Integer getCommentId() {
@@ -46,32 +62,23 @@ public final class Reply implements Rebuildable<ReplyBuilder>{
 
     public static final class ReplyBuilder {
 
-        private final Integer commentId;
-        private final String reply;
-        private final String posterUsername;
-
-        public ReplyBuilder() {
-            this.commentId = null;
-            this.reply = null;
-            this.posterUsername = null;
-        }
-
-        private ReplyBuilder(Integer commentId, String reply, String posterUsername) {
-            this.commentId = commentId;
-            this.reply = reply;
-            this.posterUsername = posterUsername;
-        }
+        private Integer commentId;
+        private String reply;
+        private String posterUsername;
         
         public ReplyBuilder commentId(Integer commentId){
-            return new ReplyBuilder(commentId, reply, posterUsername);
+            this.commentId = commentId;
+            return this;
         }
         
         public ReplyBuilder reply(String reply){
-            return new ReplyBuilder(commentId, reply, posterUsername);
+            this.reply = reply;
+            return this;
         }
         
         public ReplyBuilder posterUsername(String posterUsername){
-            return new ReplyBuilder(commentId, reply, posterUsername);
+            this.posterUsername = posterUsername;
+            return this;
         }
         
         public Reply build(){

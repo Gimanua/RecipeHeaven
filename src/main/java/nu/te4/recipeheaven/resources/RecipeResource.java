@@ -9,7 +9,9 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.logging.Level;
 import javax.ejb.EJB;
+import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -17,6 +19,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import nu.te4.recipeheaven.beans.RecipeBean;
 import nu.te4.recipeheaven.entities.Recipe;
+import nu.te4.recipeheaven.exceptions.InvalidDataException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,13 +51,30 @@ public class RecipeResource {
     }
     
     @GET
-    @Path("briefRecipes/{numberOfRecipes}")
+    @Path("brief-recipes/{numberOfRecipes}")
     public Response getBriefRecipes(@PathParam("numberOfRecipes") int numberOfRecipes){
         try {
             List<Recipe> recipes = recipeBean.getBriefRecipes(numberOfRecipes);
             return Response.ok(recipes).build();
         } catch (SQLException ex) {
             LOGGER.error("Failed to retrieve data: {}", ex.getMessage());
+            return Response.status(Response.Status.SERVICE_UNAVAILABLE).build();
+        }
+    }
+    
+    @POST
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Path("recipe")
+    public Response postRecipe(Recipe recipe){
+        try {
+            recipeBean.postRecipe(recipe);
+            return Response.status(Response.Status.CREATED).entity(recipe).build();
+        } catch(InvalidDataException ex){
+            LOGGER.info("User sent invalid Recipe to post.");
+            return Response.status(Response.Status.BAD_REQUEST).build();
+        } 
+        catch (SQLException ex) {
+            LOGGER.error("Failed to post Recipe: {}", ex.getMessage());
             return Response.status(Response.Status.SERVICE_UNAVAILABLE).build();
         }
     }

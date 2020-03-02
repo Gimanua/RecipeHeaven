@@ -14,18 +14,42 @@ import nu.te4.recipeheaven.entities.Ingredient.IngredientBuilder;
  */
 public final class Ingredient implements Rebuildable<IngredientBuilder>{
 
-    private final Integer ingredientId;
-    private final Double amount;
-    private final String unitAbbreviation;
-    private final String unitName;
-    private final String name;
+    private Integer ingredientId;
+    private Double amount;
+    private String unitAbbreviation;
+    private String unitName;
+    private String name;
 
-    private Ingredient(IngredientBuilder builder) {
+    public Ingredient(){
+        
+    }
+    
+    public Ingredient(IngredientBuilder builder) {
         this.ingredientId = builder.ingredientId;
         this.amount = builder.amount;
         this.unitAbbreviation = builder.unitAbbreviation;
         this.unitName = builder.unitName;
         this.name = builder.name;
+    }
+
+    public void setIngredientId(Integer ingredientId) {
+        this.ingredientId = ingredientId;
+    }
+
+    public void setAmount(Double amount) {
+        this.amount = amount;
+    }
+
+    public void setUnitAbbreviation(String unitAbbreviation) {
+        this.unitAbbreviation = unitAbbreviation;
+    }
+
+    public void setUnitName(String unitName) {
+        this.unitName = unitName;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public Integer getIngredientId() {
@@ -60,46 +84,35 @@ public final class Ingredient implements Rebuildable<IngredientBuilder>{
 
     public static final class IngredientBuilder {
 
-        private final Integer ingredientId;
-        private final Double amount;
-        private final String unitAbbreviation;
-        private final String unitName;
-        private final String name;
-
-        public IngredientBuilder(){
-            this.ingredientId = null;
-            this.amount = null;
-            this.unitAbbreviation = null;
-            this.unitName = null;
-            this.name = null;
-        }
-        
-        private IngredientBuilder(Integer ingredientId, Double amount, String unitAbbreviation, String unitName, String name) {
-            this.ingredientId = ingredientId;
-            this.amount = amount;
-            this.unitAbbreviation = unitAbbreviation;
-            this.unitName = unitName;
-            this.name = name;
-        }
+        private Integer ingredientId;
+        private Double amount;
+        private String unitAbbreviation;
+        private String unitName;
+        private String name;
         
         public IngredientBuilder ingredientId(Integer ingredientId){
-            return new IngredientBuilder(ingredientId, amount, unitAbbreviation, unitName, name);
+            this.ingredientId = ingredientId;
+            return this;
         }
         
         public IngredientBuilder amount(Double amount){
-            return new IngredientBuilder(ingredientId, amount, unitAbbreviation, unitName, name);
+            this.amount = amount;
+            return this;
         }
         
         public IngredientBuilder unitAbbreviation(String unitAbbreviation){
-            return new IngredientBuilder(ingredientId, amount, unitAbbreviation, unitName, name);
+            this.unitAbbreviation = unitAbbreviation;
+            return this;
         }
         
         public IngredientBuilder unitName(String unitName){
-            return new IngredientBuilder(ingredientId, amount, unitAbbreviation, unitName, name);
+            this.unitName = unitName;
+            return this;
         }
         
         public IngredientBuilder name(String name){
-            return new IngredientBuilder(ingredientId, amount, unitAbbreviation, unitName, name);
+            this.name = name;
+            return this;
         }
         
         public Ingredient build(){

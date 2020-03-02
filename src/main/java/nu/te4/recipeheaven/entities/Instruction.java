@@ -14,12 +14,24 @@ import nu.te4.recipeheaven.entities.Instruction.InstructionBuilder;
  */
 public final class Instruction implements Rebuildable<InstructionBuilder>{
 
-    private final Integer orderIndex;
-    private final String description;
+    private Integer orderIndex;
+    private String description;
 
-    private Instruction(InstructionBuilder builder) {
+    public Instruction(){
+        
+    }
+    
+    public Instruction(InstructionBuilder builder) {
         this.orderIndex = builder.orderIndex;
         this.description = builder.description;
+    }
+
+    public void setOrderIndex(Integer orderIndex) {
+        this.orderIndex = orderIndex;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public Integer getOrderIndex() {
@@ -39,25 +51,17 @@ public final class Instruction implements Rebuildable<InstructionBuilder>{
 
     public static final class InstructionBuilder {
 
-        private final Integer orderIndex;
-        private final String description;
-
-        public InstructionBuilder() {
-            this.orderIndex = null;
-            this.description = null;
-        }
-
-        private InstructionBuilder(Integer orderIndex, String description) {
-            this.orderIndex = orderIndex;
-            this.description = description;
-        }
+        private Integer orderIndex;
+        private String description;
         
         public InstructionBuilder orderIndex(Integer orderIndex){
-            return new InstructionBuilder(orderIndex, description);
+            this.orderIndex = orderIndex;
+            return this;
         }
         
         public InstructionBuilder description(String description){
-            return new InstructionBuilder(orderIndex, description);
+            this.description = description;
+            return this;
         }
         
         public Instruction build(){

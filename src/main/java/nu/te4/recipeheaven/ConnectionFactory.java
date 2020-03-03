@@ -1,13 +1,17 @@
 package nu.te4.recipeheaven;
 
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import nu.te4.recipeheaven.beans.PropertyBean;
+import nu.te4.recipeheaven.exceptions.InvalidDataException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * Used to get a connection with the database used by the project.
+ *
  * @author Adrian Klasson
  */
 public final class ConnectionFactory {
@@ -16,16 +20,15 @@ public final class ConnectionFactory {
      * Logs information.
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(ConnectionFactory.class);
-    
+
     /**
      * The string used to connect to the database.
      */
     private static final String CONNECTION_STRING;
 
     /**
-     * An empty constructor. 
-     * This is private so no one mistakingly makes an instance of this class
-     * given it only has static methods.
+     * An empty constructor. This is private so no one mistakingly makes an
+     * instance of this class given it only has static methods.
      */
     private ConnectionFactory() {
     }
@@ -38,17 +41,34 @@ public final class ConnectionFactory {
         } catch (ClassNotFoundException ex) {
             LOGGER.error("Failed to initialize JDBC Driver. {}", ex.getMessage());
         }
+
+        String username = "";
+        String password = "";
+        String host = "";
+        String databaseName = "";
+        try {
+            username = PropertyBean.getProperty(PropertyBean.DatabaseProperty.USERNAME);
+            LOGGER.debug("Username used for connection: {}", username);
+
+            password = PropertyBean.getProperty(PropertyBean.DatabaseProperty.PASSWORD);
+            LOGGER.debug("Password used for connection: {}", password);
+
+            host = PropertyBean.getProperty(PropertyBean.DatabaseProperty.HOST);
+            LOGGER.debug("Host used for connection: {}", host);
+
+            databaseName = PropertyBean.getProperty(PropertyBean.DatabaseProperty.DATABASE_NAME);
+            LOGGER.debug("Database Name user for connection: {}", databaseName);
+        } catch (Exception ex) {
+            LOGGER.error("Failed to load properties used for connection. {}", ex.getMessage());
+        }
         
-        String username = "recipe_heaven_backend";
-        LOGGER.debug("Username used for connection: {}", username);
-        String password = "taB6LiQaxjKM9esz";
-        LOGGER.debug("Password used for connection: {}", password);
-        CONNECTION_STRING = String.format("jdbc:mysql://localhost/recipe_heaven?noAccessToProcedureBodies=true&user=%s&password=%s", username, password);
+        CONNECTION_STRING = String.format("jdbc:mysql://%s/%s?noAccessToProcedureBodies=true&user=%s&password=%s", host, databaseName, username, password);
         LOGGER.debug("Connection string set to: {}", CONNECTION_STRING);
     }
 
     /**
      * Gets a connection to the database used by this project.
+     *
      * @return A connection to the database.
      * @throws SQLException If the connection fails.
      */

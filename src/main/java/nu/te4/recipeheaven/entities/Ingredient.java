@@ -16,6 +16,7 @@ public final class Ingredient implements Rebuildable<IngredientBuilder>{
 
     private Integer ingredientId;
     private Double amount;
+    private Integer unitId;
     private String unitAbbreviation;
     private String unitName;
     private String name;
@@ -27,6 +28,7 @@ public final class Ingredient implements Rebuildable<IngredientBuilder>{
     public Ingredient(IngredientBuilder builder) {
         this.ingredientId = builder.ingredientId;
         this.amount = builder.amount;
+        this.unitId = builder.unitId;
         this.unitAbbreviation = builder.unitAbbreviation;
         this.unitName = builder.unitName;
         this.name = builder.name;
@@ -38,6 +40,10 @@ public final class Ingredient implements Rebuildable<IngredientBuilder>{
 
     public void setAmount(Double amount) {
         this.amount = amount;
+    }
+
+    public void setUnitId(Integer unitId) {
+        this.unitId = unitId;
     }
 
     public void setUnitAbbreviation(String unitAbbreviation) {
@@ -60,6 +66,10 @@ public final class Ingredient implements Rebuildable<IngredientBuilder>{
         return amount;
     }
 
+    public Integer getUnitId() {
+        return unitId;
+    }
+
     public String getUnitAbbreviation() {
         return unitAbbreviation;
     }
@@ -70,6 +80,11 @@ public final class Ingredient implements Rebuildable<IngredientBuilder>{
 
     public String getName() {
         return name;
+    }
+
+    @Override
+    public String toString() {
+        return "Ingredient{" + "ingredientId=" + ingredientId + ", amount=" + amount + ", unitId=" + unitId + ", unitAbbreviation=" + unitAbbreviation + ", unitName=" + unitName + ", name=" + name + '}';
     }
 
     @Override
@@ -86,6 +101,7 @@ public final class Ingredient implements Rebuildable<IngredientBuilder>{
 
         private Integer ingredientId;
         private Double amount;
+        private Integer unitId;
         private String unitAbbreviation;
         private String unitName;
         private String name;
@@ -97,6 +113,11 @@ public final class Ingredient implements Rebuildable<IngredientBuilder>{
         
         public IngredientBuilder amount(Double amount){
             this.amount = amount;
+            return this;
+        }
+        
+        public IngredientBuilder unitId(Integer unitId){
+            this.unitId = unitId;
             return this;
         }
         

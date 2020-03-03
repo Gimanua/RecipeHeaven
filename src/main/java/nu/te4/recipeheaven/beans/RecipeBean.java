@@ -110,6 +110,7 @@ public class RecipeBean {
     }
 
     public void postRecipe(Recipe recipe) throws SQLException, InvalidDataException {
+        LOGGER.debug("Trying to post recipe: {}" + recipe);
         if(!isPostable(recipe)){
             throw new InvalidDataException("The Recipe is Ill-formatted!");
         }
@@ -126,8 +127,22 @@ public class RecipeBean {
             int id = keys.getInt(1);
             recipe.setId(id);
         }
+        
+        categoryBean.connectCategories(recipe.getCategories(), recipe.getId());
+        ingredientBean.connectIngredients(recipe.getIngredients(), recipe.getId());
+        instructionBean.insertInstructions(recipe.getInstructions(), recipe.getId());
     }
     
+    public void deleteRecipe(int recipeId) throws SQLException, InvalidDataException{
+        String sql = "DELETE FROM recipes WHERE id=?";
+        PreparedStatement stmt = ConnectionFactory.getConnection().prepareStatement(sql);
+        stmt.setInt(1, recipeId);
+        if(stmt.executeUpdate() != 1){
+            throw new InvalidDataException("Recipe does not exist.");
+        }
+    }
+    
+    // TODO Kolla alla kategorier så de har id settat
     private boolean isPostable(Recipe recipe){
         return (recipe.getUserId() != null && recipe.getName() != null && recipe.getImage() != null && recipe.getDescription() != null
                 && recipe.getCategories() != null && !recipe.getCategories().isEmpty() 

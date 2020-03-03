@@ -42,6 +42,11 @@ public final class Category implements Rebuildable<CategoryBuilder> {
                 .categoryId(categoryId)
                 .name(name);
     }
+
+    @Override
+    public String toString() {
+        return "Category{" + "categoryId=" + categoryId + ", name=" + name + '}';
+    }
     
     public static final class CategoryBuilder {
         private Integer categoryId;

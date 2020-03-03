@@ -49,6 +49,11 @@ public final class Instruction implements Rebuildable<InstructionBuilder>{
                 .orderIndex(orderIndex);
     }
 
+    @Override
+    public String toString() {
+        return "Instruction{" + "orderIndex=" + orderIndex + ", description=" + description + '}';
+    }
+
     public static final class InstructionBuilder {
 
         private Integer orderIndex;

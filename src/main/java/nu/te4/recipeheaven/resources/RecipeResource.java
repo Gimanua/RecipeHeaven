@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.logging.Level;
 import javax.ejb.EJB;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -76,6 +77,21 @@ public class RecipeResource {
         catch (SQLException ex) {
             LOGGER.error("Failed to post Recipe: {}", ex.getMessage());
             return Response.status(Response.Status.SERVICE_UNAVAILABLE).build();
+        }
+    }
+    
+    @DELETE
+    @Path("recipe/{id}")
+    public Response deleteRecipe(@PathParam("id") int id){
+        try {
+            recipeBean.deleteRecipe(id);
+            return Response.status(Response.Status.NO_CONTENT).build();
+        } catch (SQLException ex) {
+            LOGGER.error("Failed to delete Recipe: {}", ex.getMessage());
+            return Response.status(Response.Status.SERVICE_UNAVAILABLE).build();
+        } catch (InvalidDataException ex) {
+            LOGGER.info("Failed to delete Recipe: {}", ex.getMessage());
+            return Response.status(Response.Status.BAD_REQUEST).build();
         }
     }
 }

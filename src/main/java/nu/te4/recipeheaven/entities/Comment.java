@@ -60,6 +60,11 @@ public final class Comment implements Rebuildable<CommentBuilder>{
                 .posterUsername(posterUsername);
     }
 
+    @Override
+    public String toString() {
+        return "Comment{" + "commentId=" + commentId + ", comment=" + comment + ", posterUsername=" + posterUsername + '}';
+    }
+
     public static final class CommentBuilder {
 
         private Integer commentId;

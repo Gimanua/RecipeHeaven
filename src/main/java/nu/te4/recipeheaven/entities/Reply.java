@@ -60,6 +60,11 @@ public final class Reply implements Rebuildable<ReplyBuilder>{
                 .reply(reply);
     }
 
+    @Override
+    public String toString() {
+        return "Reply{" + "commentId=" + commentId + ", reply=" + reply + ", posterUsername=" + posterUsername + '}';
+    }
+
     public static final class ReplyBuilder {
 
         private Integer commentId;

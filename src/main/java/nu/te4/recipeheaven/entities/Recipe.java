@@ -158,6 +158,11 @@ public final class Recipe implements Rebuildable<RecipeBuilder> {
                 .replies(replies);
     }
 
+    @Override
+    public String toString() {
+        return "Recipe{" + "id=" + id + ", userId=" + userId + ", likes=" + likes + ", name=" + name + ", posterUsername=" + posterUsername + ", image=" + image + ", description=" + description + ", categories=" + categories + ", ingredients=" + ingredients + ", instructions=" + instructions + ", comments=" + comments + ", replies=" + replies + '}';
+    }
+
     public static final class RecipeBuilder {
 
         private Integer id;
@@ -234,25 +239,6 @@ public final class Recipe implements Rebuildable<RecipeBuilder> {
         }
 
         public Recipe build() {
-            if(image == null){
-                throw new IllegalStateException();
-            }
-            else if(name == null){
-                throw new IllegalStateException();
-            }
-            else if(description == null){
-                throw new IllegalStateException();
-            }
-            else if(categories == null || categories.isEmpty()){
-                throw new IllegalStateException();
-            }
-            else if(instructions == null || instructions.isEmpty()){
-                throw new IllegalStateException();
-            }
-            else if(ingredients == null || ingredients.isEmpty()){
-                throw new IllegalStateException();
-            }
-            
             return new Recipe(this);
         }
     }

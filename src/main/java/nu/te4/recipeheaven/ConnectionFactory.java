@@ -5,7 +5,6 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import nu.te4.recipeheaven.beans.PropertyBean;
-import nu.te4.recipeheaven.exceptions.InvalidDataException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -58,7 +57,7 @@ public final class ConnectionFactory {
 
             databaseName = PropertyBean.getProperty(PropertyBean.DatabaseProperty.DATABASE_NAME);
             LOGGER.debug("Database Name user for connection: {}", databaseName);
-        } catch (Exception ex) {
+        } catch (IOException ex) {
             LOGGER.error("Failed to load properties used for connection. {}", ex.getMessage());
         }
         

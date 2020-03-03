@@ -12,9 +12,9 @@ import javax.ejb.ApplicationException;
  * @author Adrian Klasson
  */
 @ApplicationException(rollback = true)
-public final class InvalidDataException extends Exception {
+public final class EntityMissingException extends Exception {
 
-    public InvalidDataException(String message) {
+    public EntityMissingException(String message) {
         super(message);
     }
     

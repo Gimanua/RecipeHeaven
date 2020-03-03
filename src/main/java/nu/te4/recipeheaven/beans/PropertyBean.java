@@ -8,7 +8,6 @@ package nu.te4.recipeheaven.beans;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
-import nu.te4.recipeheaven.exceptions.InvalidDataException;
 
 /**
  *
@@ -32,7 +31,7 @@ public final class PropertyBean {
         }
     }
     
-    public static String getProperty(DatabaseProperty property) throws IOException, InvalidDataException{
+    public static String getProperty(DatabaseProperty property) throws IOException{
         ClassLoader loader = Thread.currentThread().getContextClassLoader();
         InputStream stream = loader.getResourceAsStream("database.properties");
         
@@ -40,9 +39,6 @@ public final class PropertyBean {
         properties.load(stream);
         
         String propertyValue = properties.getProperty(property.key);
-        if(propertyValue == null){
-            throw new InvalidDataException("The property does not exist");
-        }
         
         return propertyValue;
     }

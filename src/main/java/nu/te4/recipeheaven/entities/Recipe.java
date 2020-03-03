@@ -6,6 +6,8 @@
 package nu.te4.recipeheaven.entities;
 
 import java.util.List;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import nu.te4.recipeheaven.building.Rebuildable;
 import nu.te4.recipeheaven.entities.Recipe.RecipeBuilder;
 
@@ -16,16 +18,34 @@ import nu.te4.recipeheaven.entities.Recipe.RecipeBuilder;
 public final class Recipe implements Rebuildable<RecipeBuilder> {
 
     private Integer id;
+    
+    @NotNull
     private Integer userId;
+    
     private Integer likes;
+    
+    @NotEmpty
     private String name;
+    
     private String posterUsername;
+    
+    @NotEmpty
     private String image;
+    
+    @NotEmpty
     private String description;
+    
+    @NotEmpty
     private List<Category> categories;
+    
+    @NotEmpty
     private List<Ingredient> ingredients;
+    
+    @NotEmpty
     private List<Instruction> instructions;
+    
     private List<Comment> comments;
+    
     private List<Reply> replies;
 
     public Recipe() {
@@ -97,7 +117,7 @@ public final class Recipe implements Rebuildable<RecipeBuilder> {
     public Integer getId() {
         return id;
     }
-    
+
     public Integer getUserId() {
         return userId;
     }
@@ -141,7 +161,7 @@ public final class Recipe implements Rebuildable<RecipeBuilder> {
     public List<Reply> getReplies() {
         return replies;
     }
-    
+
     @Override
     public RecipeBuilder rebuild() {
         return new RecipeBuilder()

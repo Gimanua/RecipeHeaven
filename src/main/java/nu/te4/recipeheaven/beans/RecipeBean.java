@@ -14,6 +14,7 @@ import java.util.LinkedList;
 import java.util.List;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import javax.persistence.EntityNotFoundException;
 import nu.te4.recipeheaven.ConnectionFactory;
 import nu.te4.recipeheaven.entities.Category;
 import nu.te4.recipeheaven.entities.Comment;
@@ -22,7 +23,7 @@ import nu.te4.recipeheaven.entities.Instruction;
 import nu.te4.recipeheaven.entities.Recipe;
 import nu.te4.recipeheaven.entities.Recipe.RecipeBuilder;
 import nu.te4.recipeheaven.entities.Reply;
-import nu.te4.recipeheaven.exceptions.InvalidDataException;
+import nu.te4.recipeheaven.exceptions.EntityMissingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,30 +38,29 @@ public class RecipeBean {
 
     @EJB
     private CategoryBean categoryBean;
-    
+
     @EJB
     private IngredientBean ingredientBean;
-    
+
     @EJB
     private InstructionBean instructionBean;
-    
+
     @EJB
     private CommentBean commentBean;
-    
+
     @EJB
     private ReplyBean replyBean;
-    
-    public Recipe getRecipe(int id) throws IllegalArgumentException, SQLException {
 
-        Connection connection = ConnectionFactory.getConnection();
-        CallableStatement stmt = connection.prepareCall("{call complete_recipe(?)}");
+    public Recipe getRecipe(int id) throws SQLException, EntityMissingException {
+        CallableStatement stmt = ConnectionFactory.getConnection().prepareCall("{call complete_recipe(?)}");
         stmt.setInt(1, id);
-
         if (!stmt.execute()) {
-            throw new IllegalArgumentException("The id '" + id + "' gave no recipe result.");
+            throw new EntityMissingException("No recipe with id " + id);
         }
 
-        RecipeBuilder recipeBuilder = insertRecipeInfo(stmt.getResultSet());
+        RecipeBuilder recipeBuilder = new RecipeBuilder();
+        appendRecipeInfo(stmt.getResultSet(), recipeBuilder);
+        
         stmt.getMoreResults();
         List<Category> categories = categoryBean.getCategories(stmt.getResultSet());
         stmt.getMoreResults();
@@ -71,22 +71,22 @@ public class RecipeBean {
         List<Comment> comments = commentBean.getComments(stmt.getResultSet());
         stmt.getMoreResults();
         List<Reply> replies = replyBean.getReplies(stmt.getResultSet());
-        
-        recipeBuilder = recipeBuilder.categories(categories)
+
+        recipeBuilder.categories(categories)
                 .ingredients(ingredients)
                 .instructions(instructions)
                 .comments(comments)
                 .replies(replies);
         return recipeBuilder.build();
     }
-    
-    public List<Recipe> getBriefRecipes(int numberOfRecipes) throws SQLException{
+
+    public List<Recipe> getBriefRecipes(int numberOfRecipes) throws SQLException {
         Connection connection = ConnectionFactory.getConnection();
         PreparedStatement stmt = connection.prepareStatement("SELECT * FROM recipe_info ORDER BY likes DESC LIMIT ?");
         stmt.setInt(1, numberOfRecipes);
         ResultSet briefRecipesData = stmt.executeQuery();
         List<Recipe> recipes = new LinkedList();
-        while(briefRecipesData.next()){
+        while (briefRecipesData.next()) {
             RecipeBuilder builder = new RecipeBuilder()
                     .id(briefRecipesData.getInt("recipe_id"))
                     .likes(briefRecipesData.getInt("likes"))
@@ -99,22 +99,19 @@ public class RecipeBean {
         return recipes;
     }
 
-    private RecipeBuilder insertRecipeInfo(ResultSet recipeData) throws SQLException {
+    private RecipeBuilder appendRecipeInfo(ResultSet recipeData, RecipeBuilder builder) throws SQLException {
         recipeData.next();
-        return new RecipeBuilder()
+        return builder
                 .likes(recipeData.getInt("likes"))
                 .name(recipeData.getString("name"))
                 .posterUsername(recipeData.getString("poster_username"))
                 .image(recipeData.getString("image"))
                 .description(recipeData.getString("description"));
     }
-
-    public void postRecipe(Recipe recipe) throws SQLException, InvalidDataException {
+    
+    public void postRecipe(Recipe recipe) throws SQLException {
         LOGGER.debug("Trying to post recipe: {}" + recipe);
-        if(!isPostable(recipe)){
-            throw new InvalidDataException("The Recipe is Ill-formatted!");
-        }
-        
+
         String sql = "INSERT INTO recipes (user_id, image, name, description) VALUES (?, ?, ?, ?)";
         PreparedStatement stmt = ConnectionFactory.getConnection().prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS);
         stmt.setInt(1, recipe.getUserId());
@@ -123,31 +120,29 @@ public class RecipeBean {
         stmt.setString(4, recipe.getDescription());
         stmt.executeUpdate();
         ResultSet keys = stmt.getGeneratedKeys();
-        if(keys.next()){
+        if (keys.next()) {
             int id = keys.getInt(1);
             recipe.setId(id);
         }
-        
+
         categoryBean.connectCategories(recipe.getCategories(), recipe.getId());
         ingredientBean.connectIngredients(recipe.getIngredients(), recipe.getId());
         instructionBean.insertInstructions(recipe.getInstructions(), recipe.getId());
     }
-    
-    public void deleteRecipe(int recipeId) throws SQLException, InvalidDataException{
+
+    /**
+     * Deletes a recipe with a certain ID from the projects database.
+     *
+     * @param recipeId The ID of the recipe to delete.
+     * @throws SQLException When the request cannot be processed by the
+     * database.
+     */
+    public void deleteRecipe(int recipeId) throws SQLException, EntityMissingException {
         String sql = "DELETE FROM recipes WHERE id=?";
         PreparedStatement stmt = ConnectionFactory.getConnection().prepareStatement(sql);
         stmt.setInt(1, recipeId);
         if(stmt.executeUpdate() != 1){
-            throw new InvalidDataException("Recipe does not exist.");
+            throw new EntityMissingException("No recipe with id " + recipeId);
         }
-    }
-    
-    // TODO Kolla alla kategorier så de har id settat
-    private boolean isPostable(Recipe recipe){
-        return (recipe.getUserId() != null && recipe.getName() != null && recipe.getImage() != null && recipe.getDescription() != null
-                && recipe.getCategories() != null && !recipe.getCategories().isEmpty() 
-                && recipe.getIngredients() != null && !recipe.getIngredients().isEmpty()
-                && recipe.getInstructions() != null & !recipe.getInstructions().isEmpty()
-                );
     }
 }

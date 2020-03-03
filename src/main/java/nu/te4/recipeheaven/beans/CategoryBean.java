@@ -15,7 +15,6 @@ import javax.ejb.Stateless;
 import nu.te4.recipeheaven.ConnectionFactory;
 import nu.te4.recipeheaven.entities.Category;
 import nu.te4.recipeheaven.entities.Category.CategoryBuilder;
-import nu.te4.recipeheaven.exceptions.InvalidDataException;
 
 /**
  *
@@ -41,19 +40,13 @@ public class CategoryBean {
      * @param categories The categories to connect.
      * @param recipeId The Id of the recipe to connect.
      */
-    public void connectCategories(List<Category> categories, int recipeId) throws SQLException, InvalidDataException {
+    public void connectCategories(List<Category> categories, int recipeId) throws SQLException {
         Connection connection = ConnectionFactory.getConnection();
         for (Category category : categories) {
             String sql = "INSERT INTO recipe_categories (recipe_id, category_id) VALUES (?,?)";
             PreparedStatement stmt = connection.prepareStatement(sql);
             stmt.setInt(1, recipeId);
-            if (category.getCategoryId() == null) {
-                throw new InvalidDataException("Invalid category ID or recipe ID or combination is already used.");
-            }
             stmt.setInt(2, category.getCategoryId());
-            if (stmt.executeUpdate() != 1) {
-                throw new InvalidDataException("Invalid category ID or recipe ID or combination is already used.");
-            }
         }
     }
 }

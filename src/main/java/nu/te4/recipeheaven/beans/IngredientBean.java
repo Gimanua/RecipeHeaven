@@ -16,7 +16,6 @@ import nu.te4.recipeheaven.ConnectionFactory;
 import nu.te4.recipeheaven.entities.Category;
 import nu.te4.recipeheaven.entities.Ingredient;
 import nu.te4.recipeheaven.entities.Ingredient.IngredientBuilder;
-import nu.te4.recipeheaven.exceptions.InvalidDataException;
 
 /**
  *

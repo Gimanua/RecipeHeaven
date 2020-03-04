@@ -8,6 +8,8 @@ package nu.te4.recipeheaven.beans;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -15,6 +17,8 @@ import java.util.Properties;
  */
 public final class PropertyBean {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(PropertyBean.class);
+    
     private PropertyBean() {
     }
     
@@ -31,16 +35,49 @@ public final class PropertyBean {
         }
     }
     
-    public static String getProperty(DatabaseProperty property) throws IOException{
-        ClassLoader loader = Thread.currentThread().getContextClassLoader();
-        InputStream stream = loader.getResourceAsStream("database.properties");
+    public enum GitHubOAuthProperty{
+        CLIENT_ID("client_id"),
+        CLIENT_SECRET("client_secret");
         
-        Properties properties = new Properties();
-        properties.load(stream);
+        private final String key;
         
-        String propertyValue = properties.getProperty(property.key);
-        
-        return propertyValue;
+        private GitHubOAuthProperty(String key){
+            this.key = key;
+        }
+    }
+    
+    public static String getProperty(DatabaseProperty property) {
+        try {
+            ClassLoader loader = Thread.currentThread().getContextClassLoader();
+            InputStream stream = loader.getResourceAsStream("database.properties");
+            
+            Properties properties = new Properties();
+            properties.load(stream);
+            
+            String propertyValue = properties.getProperty(property.key);
+            
+            return propertyValue;
+        } catch (IOException ex) {
+            LOGGER.error("Failed to get property: {}", ex.getMessage());
+            return null;
+        }
+    }
+    
+    public static String getProperty(GitHubOAuthProperty property) {
+        try {
+            ClassLoader loader = Thread.currentThread().getContextClassLoader();
+            InputStream stream = loader.getResourceAsStream("github-oauth.properties");
+            
+            Properties properties = new Properties();
+            properties.load(stream);
+            
+            String propertyValue = properties.getProperty(property.key);
+            
+            return propertyValue;
+        } catch (IOException ex) {
+            LOGGER.error("Failed to get property: {}", ex.getMessage());
+            return null;
+        }
     }
 
 }

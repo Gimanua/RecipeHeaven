@@ -41,26 +41,15 @@ public final class ConnectionFactory {
             LOGGER.error("Failed to initialize JDBC Driver. {}", ex.getMessage());
         }
 
-        String username = "";
-        String password = "";
-        String host = "";
-        String databaseName = "";
-        try {
-            username = PropertyBean.getProperty(PropertyBean.DatabaseProperty.USERNAME);
-            LOGGER.debug("Username used for connection: {}", username);
+        String username = PropertyBean.getProperty(PropertyBean.DatabaseProperty.USERNAME);
+        String password = PropertyBean.getProperty(PropertyBean.DatabaseProperty.PASSWORD);
+        String host = PropertyBean.getProperty(PropertyBean.DatabaseProperty.HOST);
+        String databaseName = PropertyBean.getProperty(PropertyBean.DatabaseProperty.DATABASE_NAME);
+        LOGGER.debug("Username used for connection: {}", username);
+        LOGGER.debug("Password used for connection: {}", password);
+        LOGGER.debug("Host used for connection: {}", host);
+        LOGGER.debug("Database Name user for connection: {}", databaseName);
 
-            password = PropertyBean.getProperty(PropertyBean.DatabaseProperty.PASSWORD);
-            LOGGER.debug("Password used for connection: {}", password);
-
-            host = PropertyBean.getProperty(PropertyBean.DatabaseProperty.HOST);
-            LOGGER.debug("Host used for connection: {}", host);
-
-            databaseName = PropertyBean.getProperty(PropertyBean.DatabaseProperty.DATABASE_NAME);
-            LOGGER.debug("Database Name user for connection: {}", databaseName);
-        } catch (IOException ex) {
-            LOGGER.error("Failed to load properties used for connection. {}", ex.getMessage());
-        }
-        
         CONNECTION_STRING = String.format("jdbc:mysql://%s/%s?noAccessToProcedureBodies=true&user=%s&password=%s", host, databaseName, username, password);
         LOGGER.debug("Connection string set to: {}", CONNECTION_STRING);
     }

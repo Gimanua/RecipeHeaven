@@ -130,6 +130,23 @@ public class RecipeBean {
         instructionBean.insertInstructions(recipe.getInstructions(), recipe.getId());
     }
 
+    public void putRecipe(int recipeId, Recipe recipe) throws SQLException, EntityMissingException{
+        String sql = "UPDATE recipes SET image=?, name=?, description=? WHERE id=?";
+        PreparedStatement stmt = ConnectionFactory.getConnection().prepareStatement(sql);
+        stmt.setString(1, recipe.getImage());
+        stmt.setString(2, recipe.getName());
+        stmt.setString(3, recipe.getDescription());
+        stmt.setInt(4, recipeId);
+        if(stmt.executeUpdate() != 1){
+            throw new EntityMissingException("No recipe with id " + recipeId);
+        }
+        
+        LOGGER.debug("Recipe: {}",recipe);
+        categoryBean.putCategories(recipe.getCategories(), recipeId);
+        ingredientBean.putIngredients(recipe.getIngredients(), recipeId);
+        instructionBean.putInstructions(recipe.getInstructions(), recipeId);
+    }
+    
     /**
      * Deletes a recipe with a certain ID from the projects database.
      *

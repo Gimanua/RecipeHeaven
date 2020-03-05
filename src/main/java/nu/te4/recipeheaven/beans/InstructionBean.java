@@ -52,4 +52,16 @@ public class InstructionBean {
             stmt.executeUpdate();
         }
     }
+    
+    public void putInstructions(List<Instruction> instructions, int recipeId) throws SQLException{
+        deleteInstructions(recipeId);
+        insertInstructions(instructions, recipeId);
+    }
+    
+    private void deleteInstructions(int recipeId) throws SQLException{
+        String sql = "DELETE FROM instructions WHERE recipe_id=?";
+        PreparedStatement stmt = ConnectionFactory.getConnection().prepareStatement(sql);
+        stmt.setInt(1, recipeId);
+        stmt.executeUpdate();
+    }
 }

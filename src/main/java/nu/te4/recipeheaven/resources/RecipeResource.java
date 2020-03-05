@@ -10,6 +10,7 @@ import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -95,6 +96,20 @@ public class RecipeResource {
         } catch (SQLException ex) {
             LOGGER.error("Failed to post Recipe: {}", ex.getMessage());
             return Response.status(Response.Status.SERVICE_UNAVAILABLE).build();
+        }
+    }
+    
+    @PUT
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Path("recipe/{id}")
+    public Response putRecipe(@PathParam("id") int id, @Valid Recipe recipe){
+        try {
+            recipeBean.putRecipe(id, recipe);
+            return Response.status(Response.Status.NO_CONTENT).build();
+        } catch (SQLException ex) {
+            throw new ServiceUnavailableException("Failed to put Recipe: " + ex.getMessage());
+        } catch (EntityMissingException ex) {
+            throw new NotFoundException("Failed to put Recipe: " + ex.getMessage());
         }
     }
 

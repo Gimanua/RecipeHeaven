@@ -61,4 +61,16 @@ public class IngredientBean {
             stmt.executeUpdate();
         }
     }
+    
+    public void putIngredients(List<Ingredient> ingredients, int recipeId) throws SQLException{
+        deleteIngredients(recipeId);
+        connectIngredients(ingredients, recipeId);
+    }
+    
+    private void deleteIngredients(int recipeId) throws SQLException{
+        String sql = "DELETE FROM recipe_ingredients WHERE recipe_id=?";
+        PreparedStatement stmt = ConnectionFactory.getConnection().prepareStatement(sql);
+        stmt.setInt(1, recipeId);
+        stmt.executeUpdate();
+    }
 }

@@ -43,4 +43,19 @@ public class UserBean {
         
         return user;
     }
+    
+    public User getUser(String token) throws UnauthorizedException, SQLException{
+        JsonObject userInfo = gitHubOAuthBean.getUserInfo(token);
+        int oAuthId = userInfo.getInt("id");
+        String sql = "SELECT * FROM users WHERE oauth_id=?";
+        PreparedStatement stmt = ConnectionFactory.getConnection().prepareStatement(sql);
+        stmt.setInt(1, oAuthId);
+        ResultSet data = stmt.executeQuery();
+        data.next();
+        return new User.UserBuilder()
+                .id(data.getInt("id"))
+                .username(data.getString("username"))
+                .oauthId(data.getInt("oauth_id"))
+                .build();
+    }
 }

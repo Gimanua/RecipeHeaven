@@ -5,6 +5,7 @@
  */
 package nu.te4.recipeheaven.entities;
 
+import javax.validation.constraints.NotEmpty;
 import nu.te4.recipeheaven.building.Rebuildable;
 import nu.te4.recipeheaven.entities.Comment.CommentBuilder;
 
@@ -15,6 +16,7 @@ import nu.te4.recipeheaven.entities.Comment.CommentBuilder;
 public final class Comment implements Rebuildable<CommentBuilder>{
 
     private Integer commentId;
+    @NotEmpty
     private String comment;
     private String posterUsername;
 

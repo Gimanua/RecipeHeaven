@@ -47,6 +47,20 @@ public class CategoryBean {
             PreparedStatement stmt = connection.prepareStatement(sql);
             stmt.setInt(1, recipeId);
             stmt.setInt(2, category.getCategoryId());
+            stmt.executeUpdate();
         }
+    }
+
+    public void putCategories(List<Category> categories, int recipeId) throws SQLException {
+        deleteCategories(recipeId);
+        connectCategories(categories, recipeId);
+    }
+
+    private void deleteCategories(int recipeId) throws SQLException {
+        Connection connection = ConnectionFactory.getConnection();
+        String sql = "DELETE FROM recipe_categories WHERE recipe_id=?";
+        PreparedStatement stmt = connection.prepareStatement(sql);
+        stmt.setInt(1, recipeId);
+        stmt.executeUpdate();
     }
 }

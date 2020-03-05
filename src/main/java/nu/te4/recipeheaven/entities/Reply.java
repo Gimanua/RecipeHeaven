@@ -5,6 +5,7 @@
  */
 package nu.te4.recipeheaven.entities;
 
+import javax.validation.constraints.NotEmpty;
 import nu.te4.recipeheaven.building.Rebuildable;
 import nu.te4.recipeheaven.entities.Reply.ReplyBuilder;
 
@@ -14,7 +15,9 @@ import nu.te4.recipeheaven.entities.Reply.ReplyBuilder;
  */
 public final class Reply implements Rebuildable<ReplyBuilder>{
 
+    private Integer id;
     private Integer commentId;
+    @NotEmpty
     private String reply;
     private String posterUsername;
 
@@ -23,9 +26,14 @@ public final class Reply implements Rebuildable<ReplyBuilder>{
     }
     
     public Reply(ReplyBuilder builder) {
+        this.id = builder.id;
         this.commentId = builder.commentId;
         this.reply = builder.reply;
         this.posterUsername = builder.posterUsername;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     public void setCommentId(Integer commentId) {
@@ -38,6 +46,10 @@ public final class Reply implements Rebuildable<ReplyBuilder>{
 
     public void setPosterUsername(String posterUsername) {
         this.posterUsername = posterUsername;
+    }
+
+    public Integer getId() {
+        return id;
     }
 
     public Integer getCommentId() {
@@ -67,9 +79,15 @@ public final class Reply implements Rebuildable<ReplyBuilder>{
 
     public static final class ReplyBuilder {
 
+        private Integer id;
         private Integer commentId;
         private String reply;
         private String posterUsername;
+        
+        public ReplyBuilder id(Integer id){
+            this.id = id;
+            return this;
+        }
         
         public ReplyBuilder commentId(Integer commentId){
             this.commentId = commentId;

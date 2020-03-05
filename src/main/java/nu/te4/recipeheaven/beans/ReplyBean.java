@@ -5,13 +5,17 @@
  */
 package nu.te4.recipeheaven.beans;
 
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.LinkedList;
 import java.util.List;
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import nu.te4.recipeheaven.ConnectionFactory;
 import nu.te4.recipeheaven.entities.Reply;
 import nu.te4.recipeheaven.entities.Reply.ReplyBuilder;
+import nu.te4.recipeheaven.exceptions.UnauthorizedException;
 
 /**
  *
@@ -19,6 +23,9 @@ import nu.te4.recipeheaven.entities.Reply.ReplyBuilder;
  */
 @Stateless
 public class ReplyBean {
+    
+    @EJB
+    private UserBean userBean;
     
     public List<Reply> getReplies(ResultSet replyData) throws SQLException{
         List<Reply> replies = new LinkedList();
@@ -30,5 +37,23 @@ public class ReplyBean {
             replies.add(builder.build());
         }
         return replies;
+    }
+    
+    public Reply postReply(Reply reply, int commentId, String token) throws UnauthorizedException, SQLException{
+        String sql = "INSERT INTO replies (id, user_id, comment_id, reply) VALUES(NULL,?,?,?)";
+        PreparedStatement stmt = ConnectionFactory.getConnection().prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS);
+        
+        int userId = userBean.getUser(token).getId();
+        
+        stmt.setInt(1, userId);
+        stmt.setInt(2, commentId);
+        stmt.setString(3, reply.getReply());
+        stmt.executeUpdate();
+        
+        ResultSet keys = stmt.getGeneratedKeys();
+        keys.next();
+        reply.setId(keys.getInt(1));
+        
+        return reply;
     }
 }

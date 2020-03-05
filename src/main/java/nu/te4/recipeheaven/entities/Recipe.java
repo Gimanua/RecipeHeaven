@@ -15,6 +15,7 @@ import nu.te4.recipeheaven.entities.Recipe.RecipeBuilder;
  *
  * @author Adrian Klasson
  */
+@NotNull
 public final class Recipe implements Rebuildable<RecipeBuilder> {
 
     private Integer id;

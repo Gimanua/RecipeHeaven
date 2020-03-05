@@ -7,12 +7,17 @@ import React from 'react';
  * @param {String} props.name The name of the recipe
  * @param {String} props.description The description of the recipe
  */
-export default function BriefRecipe({image, name, description}){
+export default function BriefRecipe({ image, name, description }) {
     return (
         <article className="card">
+            <div className="card-header">
+                <h2 className="card-header-title">{name}</h2>
+            </div>
             <img className="card-image" src={image} alt={name} />
-            <h2>{name}</h2>
-            <p>{description}</p>
+            <div className="card-content">
+
+                <p>{description}</p>
+            </div>
         </article>
     );
 }

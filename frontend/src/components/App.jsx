@@ -16,7 +16,7 @@ function App() {
         setCurrentContent(<Home />);
         break;
       case 'recipes':
-        setCurrentContent(<Recipes />);
+        setCurrentContent(<Recipes loggedIn={true} />);
         break;
       default:
         setCurrentContent(<Home />);
@@ -27,7 +27,9 @@ function App() {
   return (
     <>
       <NavigationBar currentPage={currentPage} onPageChange={(page) => switchPage(page)} />
-      {currentContent}
+      <main className="container">
+        {currentContent}
+      </main>
     </>
   );
 }

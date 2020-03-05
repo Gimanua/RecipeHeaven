@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Värd: 127.0.0.1
--- Tid vid skapande: 04 mars 2020 kl 16:10
+-- Tid vid skapande: 05 mars 2020 kl 14:32
 -- Serverversion: 10.4.8-MariaDB
 -- PHP-version: 7.3.11
 
@@ -231,6 +231,17 @@ CREATE TABLE `reported_recipes` (
 -- --------------------------------------------------------
 
 --
+-- Ersättningsstruktur för vy `reported_recipes_info`
+-- (See below for the actual view)
+--
+CREATE TABLE `reported_recipes_info` (
+`recipe_id` int(10) unsigned
+,`reports` bigint(21)
+);
+
+-- --------------------------------------------------------
+
+--
 -- Tabellstruktur `units`
 --
 
@@ -296,6 +307,15 @@ CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW 
 DROP TABLE IF EXISTS `reply_info`;
 
 CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `reply_info`  AS  select `replies`.`comment_id` AS `comment_id`,`replies`.`id` AS `reply_id`,`replies`.`reply` AS `reply`,`users`.`username` AS `poster_username` from (`replies` join `users` on(`replies`.`user_id` = `users`.`id`)) ;
+
+-- --------------------------------------------------------
+
+--
+-- Struktur för vy `reported_recipes_info`
+--
+DROP TABLE IF EXISTS `reported_recipes_info`;
+
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `reported_recipes_info`  AS  select `reported_recipes`.`recipe_id` AS `recipe_id`,count(`reported_recipes`.`recipe_id`) AS `reports` from `reported_recipes` group by `reported_recipes`.`recipe_id` ;
 
 --
 -- Index för dumpade tabeller

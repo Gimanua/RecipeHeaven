@@ -13,3 +13,7 @@ this file should contain values for the following keys:
 * db_name - The name of the database to use.
 * user - The user to use for the database.
 * password - The password for the user.
+
+Another file that's needed is github-oauth.properties, this file should contain values for the following keys:
+* client_id - The client ID issued by GitHub.
+* client_secret - The secret issued by GitHub.

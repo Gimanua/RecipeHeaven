@@ -29,7 +29,7 @@ export default function AddRecipeInstructions(props) {
                 </div>
                 <button onClick={() => setShowModal(false)} className="modal-close is-large" aria-label="close"></button>
             </div>
-            <ol>
+            <ol id="instructions">
                 {instructions.map((instruction, index) => <li key={index}>{instruction}</li>)}
             </ol>
         </>

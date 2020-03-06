@@ -12,10 +12,10 @@ export default function Filter(props) {
 
     return (
         <>
-            <button className="button is-size-1 has-text-weight-bold is-fullwidth" onClick={() => setCategoriesVisible(true)}>Filtrera</button>
+            <button className="button is-size-1 has-text-weight-bold" onClick={() => setCategoriesVisible(true)}>Filtrera</button>
             <div className={categoriesClasses}>
                 <div className="modal-background"></div>
-                <div className="modal-content">
+                <div className="modal-content box">
                     <Categories />
                 </div>
                 <button onClick={() => setCategoriesVisible(false)} className="modal-close is-large" aria-label="close"></button>

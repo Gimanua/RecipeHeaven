@@ -5,11 +5,18 @@
  */
 package nu.te4.recipeheaven.beans;
 
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Base64;
 import java.util.LinkedList;
 import java.util.List;
 import javax.ejb.EJB;
@@ -36,6 +43,9 @@ public class RecipeBean {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RecipeBean.class);
 
+    @EJB
+    private ImageBean imageBean;
+    
     @EJB
     private CategoryBean categoryBean;
 
@@ -92,7 +102,6 @@ public class RecipeBean {
                     .likes(briefRecipesData.getInt("likes"))
                     .name(briefRecipesData.getString("name"))
                     .posterUsername(briefRecipesData.getString("poster_username"))
-                    .image(briefRecipesData.getString("image"))
                     .description(briefRecipesData.getString("description"));
             recipes.add(builder.build());
         }
@@ -105,43 +114,44 @@ public class RecipeBean {
                 .likes(recipeData.getInt("likes"))
                 .name(recipeData.getString("name"))
                 .posterUsername(recipeData.getString("poster_username"))
-                .image(recipeData.getString("image"))
                 .description(recipeData.getString("description"));
     }
     
-    public void postRecipe(Recipe recipe) throws SQLException {
-        LOGGER.debug("Trying to post recipe: {}" + recipe);
-
-        String sql = "INSERT INTO recipes (user_id, image, name, description) VALUES (?, ?, ?, ?)";
+    
+    
+    public void postRecipe(Recipe recipe) throws SQLException, IOException {
+        String sql = "INSERT INTO recipes (user_id, name, description) VALUES (?, ?, ?)";
         PreparedStatement stmt = ConnectionFactory.getConnection().prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS);
         stmt.setInt(1, recipe.getUserId());
-        stmt.setString(2, recipe.getImage());
-        stmt.setString(3, recipe.getName());
-        stmt.setString(4, recipe.getDescription());
+        stmt.setString(2, recipe.getName());
+        stmt.setString(3, recipe.getDescription());
         stmt.executeUpdate();
         ResultSet keys = stmt.getGeneratedKeys();
         if (keys.next()) {
             int id = keys.getInt(1);
             recipe.setId(id);
         }
-
+        imageBean.saveImageToDisk(recipe.getImage(), recipe.getId());
+        recipe.setImage("/image/" + recipe.getId() + ".jpg");
+        
         categoryBean.connectCategories(recipe.getCategories(), recipe.getId());
         ingredientBean.connectIngredients(recipe.getIngredients(), recipe.getId());
         instructionBean.insertInstructions(recipe.getInstructions(), recipe.getId());
     }
 
-    public void putRecipe(int recipeId, Recipe recipe) throws SQLException, EntityMissingException{
-        String sql = "UPDATE recipes SET image=?, name=?, description=? WHERE id=?";
+    public void putRecipe(int recipeId, Recipe recipe) throws SQLException, EntityMissingException, IOException{
+        imageBean.deleteImage(recipeId);
+        imageBean.saveImageToDisk(recipe.getImage(), recipeId);
+        
+        String sql = "UPDATE recipes SET name=?, description=? WHERE id=?";
         PreparedStatement stmt = ConnectionFactory.getConnection().prepareStatement(sql);
-        stmt.setString(1, recipe.getImage());
-        stmt.setString(2, recipe.getName());
-        stmt.setString(3, recipe.getDescription());
-        stmt.setInt(4, recipeId);
+        stmt.setString(1, recipe.getName());
+        stmt.setString(2, recipe.getDescription());
+        stmt.setInt(3, recipeId);
         if(stmt.executeUpdate() != 1){
             throw new EntityMissingException("No recipe with id " + recipeId);
         }
         
-        LOGGER.debug("Recipe: {}",recipe);
         categoryBean.putCategories(recipe.getCategories(), recipeId);
         ingredientBean.putIngredients(recipe.getIngredients(), recipeId);
         instructionBean.putInstructions(recipe.getInstructions(), recipeId);
@@ -155,6 +165,7 @@ public class RecipeBean {
      * database.
      */
     public void deleteRecipe(int recipeId) throws SQLException, EntityMissingException {
+        imageBean.deleteImage(recipeId);
         String sql = "DELETE FROM recipes WHERE id=?";
         PreparedStatement stmt = ConnectionFactory.getConnection().prepareStatement(sql);
         stmt.setInt(1, recipeId);

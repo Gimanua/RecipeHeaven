@@ -46,6 +46,16 @@ public final class PropertyBean {
         }
     }
     
+    public enum ImageProperty{
+        PATH("path");
+        
+        private final String key;
+        
+        private ImageProperty(String key){
+            this.key = key;
+        }
+    }
+    
     public static String getProperty(DatabaseProperty property) {
         try {
             ClassLoader loader = Thread.currentThread().getContextClassLoader();
@@ -67,6 +77,23 @@ public final class PropertyBean {
         try {
             ClassLoader loader = Thread.currentThread().getContextClassLoader();
             InputStream stream = loader.getResourceAsStream("github-oauth.properties");
+            
+            Properties properties = new Properties();
+            properties.load(stream);
+            
+            String propertyValue = properties.getProperty(property.key);
+            
+            return propertyValue;
+        } catch (IOException ex) {
+            LOGGER.error("Failed to get property: {}", ex.getMessage());
+            return null;
+        }
+    }
+    
+    public static String getProperty(ImageProperty property) {
+        try {
+            ClassLoader loader = Thread.currentThread().getContextClassLoader();
+            InputStream stream = loader.getResourceAsStream("image.properties");
             
             Properties properties = new Properties();
             properties.load(stream);

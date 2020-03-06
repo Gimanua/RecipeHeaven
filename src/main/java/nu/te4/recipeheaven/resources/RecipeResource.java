@@ -1,12 +1,18 @@
 package nu.te4.recipeheaven.resources;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.logging.Level;
 import javax.ejb.EJB;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.Part;
 import javax.validation.Valid;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
+import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.POST;
@@ -15,6 +21,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.ServiceUnavailableException;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import nu.te4.recipeheaven.beans.RecipeBean;
@@ -80,12 +87,6 @@ public class RecipeResource {
         }
     }
 
-    /**
-     * Posts a Recipe.
-     *
-     * @param recipe The Recipe to post.
-     * @return A response with a status embedded.
-     */
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Path("recipe")
@@ -96,6 +97,9 @@ public class RecipeResource {
         } catch (SQLException ex) {
             LOGGER.error("Failed to post Recipe: {}", ex.getMessage());
             return Response.status(Response.Status.SERVICE_UNAVAILABLE).build();
+        } catch (IOException ex) {
+            LOGGER.error("Failed to post Recipe: {}", ex.getMessage());
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
         }
     }
     
@@ -110,6 +114,8 @@ public class RecipeResource {
             throw new ServiceUnavailableException("Failed to put Recipe: " + ex.getMessage());
         } catch (EntityMissingException ex) {
             throw new NotFoundException("Failed to put Recipe: " + ex.getMessage());
+        } catch (IOException ex) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
         }
     }
 

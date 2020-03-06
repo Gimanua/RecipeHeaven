@@ -22,7 +22,7 @@ export default function Recipes({loggedIn}){
         <>
             <Filter />
             {loggedIn && <><br /><button onClick={() => setShowAddRecipe(true)} className="button">Lägg till ett eget Recept</button></>}
-            {showAddRecipe && <AddRecipe />}
+            {showAddRecipe && <AddRecipe close={() => setShowAddRecipe(false)} />}
             <ul>
                 {fakeRecipes.map((v,i) => <li className="recipe-item" key={i}>{v}</li>)}
             </ul>

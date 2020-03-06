@@ -1,17 +1,50 @@
 import React from 'react';
-import './styling/Categories.scss';
 
-export default function Categories(props) {
+export default function Categories({ onSelectedChange }) {
+
+    const [categoriesChecked, setCategoriesChecked] = React.useState(0);
+
+    function onCategoryCheck(category, checked) {
+        setCategoriesChecked(checked ? categoriesChecked + 1 : categoriesChecked - 1);
+        onSelectedChange(category, checked);
+    }
 
     return (
         <>
-            <h2 className="title">Kategorier</h2>
-
-            <input className="category-checkbox" type="checkbox" name="category-meat" id="category-meat" value="meat" />
-            <label className="is-size-2" htmlFor="category-meat">Kött</label><br />
-
-            <input className="category-checkbox" type="checkbox" name="category-vegetarian" id="category-vegetarian" value="vegetarian" />
-            <label className="is-size-2" htmlFor="category-vegetarian">Vegetariskt</label><br />
+            <label className="label" htmlFor="categories">Kategorier</label>
+            <div className="field" id="categories">
+                <div className="control">
+                    <label className="checkbox">
+                        <input type="checkbox" value="vegetarian" onChange={(e) => onCategoryCheck(e.target.value, e.target.checked)} />
+                        Vegetariskt
+                    </label>
+                </div>
+                <div className="control">
+                    <label className="checkbox">
+                        <input type="checkbox" value="fish" onChange={(e) => onCategoryCheck(e.target.value, e.target.checked)} />
+                        Fisk
+                    </label>
+                </div>
+                <div className="control">
+                    <label className="checkbox">
+                        <input type="checkbox" value="meat" onChange={(e) => onCategoryCheck(e.target.value, e.target.checked)} />
+                        Kött
+                    </label>
+                </div>
+                <div className="control">
+                    <label className="checkbox">
+                        <input type="checkbox" value="dessert" onChange={(e) => onCategoryCheck(e.target.value, e.target.checked)} />
+                        Efterrätt
+                    </label>
+                </div>
+                <div className="control">
+                    <label className="checkbox">
+                        <input type="checkbox" value="main" onChange={(e) => onCategoryCheck(e.target.value, e.target.checked)} />
+                        Varmrätt
+                    </label>
+                </div>
+                <p className={`help ${categoriesChecked > 0 ? 'is-hidden' : 'is-danger'}`}>Du måste välja minst en kategori.</p>
+            </div>
         </>
     );
 }

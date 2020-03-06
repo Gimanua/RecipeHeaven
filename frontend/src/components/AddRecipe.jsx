@@ -1,73 +1,83 @@
 import React from 'react';
 import Categories from './Categories';
-import AddRecipeIngredients from './AddRecipeIngredients';
+import Ingredients from './Ingredients';
 import AddRecipeInstructions from './AddRecipeInstructions';
 import { postRecipe } from '../logic/APIHelper';
 import { RecipeBuilder } from '../entities/Recipe';
+import { loadImageAsBase64 } from '../logic/ImageHelper';
 
 export default function AddRecipe({ close }) {
 
-    function submit() {
-        if(!validateInput())
-            return;
-        
-        const reader = new FileReader();
-        reader.onloadend = () => {
-            const recipe = new RecipeBuilder()
-                .setName(document.getElementById('add-recipe-name').value)
-                .setDescription(document.getElementById('add-recipe-description').value)
-                .setUserId(6)//test
-                .setCategories([{categoryId: 1}])
-                .setIngredients([{"amount": 3.0, "ingredientId": 3, "name": "Ägg"}])
-                .setInstructions([{"description": "Blanda runt skiten och ät.","orderIndex": 1}])
-                .setImage(reader.result)
-                .build();
-            postRecipe(recipe);
-            close();
-        };
-        console.log(document.getElementById('add-recipe-image').files);
-        
-        reader.readAsDataURL(document.getElementById('add-recipe-image').files[0]);
+    const [name, setName] = React.useState('');
+    const [description, setDescription] = React.useState('');
+    const [selectedFile, setSelectedFile] = React.useState(null);
+    const [categories, setCategories] = React.useState([]);
+    const [ingredients, setIngredients] = React.useState([]);
+    const [instructions, setInstructions] = React.useState([]);
+
+    async function submit() {
+        try {
+            const imageAsBase64 = await loadImageAsBase64(selectedFile);
+            console.log(imageAsBase64);
+        } catch (error) {
+            console.log('Failed to load image:');
+            console.log(error);
+        }
     }
 
-    function validateInput(){
-        const name = document.getElementById('add-recipe-name').value;
-        const description = document.getElementById('add-recipe-description').value;
-        const image = document.getElementById('add-recipe-image').files.length > 0;
-        
-        const categories = document.getElementsByClassName('category-checkbox');
-        let atLeastOneCategory = false;
-        for (const category of categories) {
-            if(category.checked){
-                atLeastOneCategory = true;
-                break;
-            }
+    function selectedCategoryChange(selectedCategory, checked) {
+        if (checked) {
+            setCategories([...categories, selectedCategory])
         }
-
-        const atLeastOneIngredient = document.getElementById('ingredients').hasChildNodes();
-        const atLeastOneInstruction = document.getElementById('instructions').hasChildNodes();
-
-        return name && description && image && atLeastOneCategory && atLeastOneIngredient && atLeastOneInstruction;
+        else {
+            setCategories(categories.filter(category => category !== selectedCategory));
+        }
     }
 
     return (
-        <form id="add-recipe-form" onSubmit={(e) => e.preventDefault()} action="/test" className="box" method="post">
-            <label className="label" htmlFor="add-recipe-name">Namn på Rätt</label>
-            <input className="input" type="text" id="add-recipe-name" name="title" />
+        <form className="box" onSubmit={(e) => e.preventDefault()}>
+            <div className="field">
+                <label className="label" htmlFor="add-recipe-name">Namn på Rätt</label>
+                <div className="control">
+                    <input className={`input ${name ? 'is-success' : 'is-danger'}`} type="text" id="add-recipe-name" onChange={e => setName(e.target.value)} />
+                </div>
+                <p className={`help ${name ? 'is-hidden' : 'is-danger'}`}>Du måste ange att namn på rätten.</p>
+            </div>
 
-            <label className="label" htmlFor="add-recipe-description">Beskrivning av Rätt</label>
-            <textarea className="textarea" name="description" id="add-recipe-description" rows="6"></textarea>
+            <div className="field">
+                <label className="label" htmlFor="add-recipe-description">Beskrivning av Rätt</label>
+                <div className="control">
+                    <textarea className={`textarea ${description ? 'is-success' : 'is-danger'}`} id="add-recipe-description" onChange={e => setDescription(e.target.value)}></textarea>
+                </div>
+                <p className={`help ${description ? 'is-hidden' : 'is-danger'}`}>Du måste ange en på rätten.</p>
+            </div>
 
-            <label className="label" htmlFor="add-recipe-image">Bild på Rätt</label>
-            <input type="file" accept="image/jpeg" name="image" id="add-recipe-image" />
+            <div className="field">
+                <label className="label" htmlFor="add-recipe-image">Bild på Rätt</label>
+                <div className="control">
+                    <div className={`file ${selectedFile ? 'is-success' : 'is-danger'}`}>
+                        <label className="file-label">
+                            <input className="file-input" id="add-recipe-image" type="file" accept="image/jpeg" onChange={e => { if (e.target.files.length === 1) setSelectedFile(e.target.files[0]) }} />
+                            <span className="file-cta">
+                                <span className="file-icon">
+                                    <i className="fas fa-upload"></i>
+                                </span>
+                                <span className="file-label">Välj en Fil...</span>
+                            </span>
+                            <span className="file-name">{(selectedFile && selectedFile.name || 'Ingen fil vald')}</span>
+                        </label>
+                    </div>
+                </div>
+                <p className={`help ${selectedFile ? 'is-hidden' : 'is-danger'}`}>Du måste ladda up en bild på rätten.</p>
+            </div>
 
-            <Categories />
+            <Categories onSelectedChange={selectedCategoryChange} />
 
-            <AddRecipeIngredients />
+            <Ingredients />
 
             <AddRecipeInstructions />
 
-            <button onClick={() => submit()} className="has-text-weight-bold button">Lägg till Recept</button>
+            <button onClick={() => submit()} className="has-text-weight-bold button is-link">Lägg till Recept</button>
 
         </form>
     );

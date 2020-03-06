@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Värd: 127.0.0.1
--- Tid vid skapande: 05 mars 2020 kl 14:32
+-- Tid vid skapande: 06 mars 2020 kl 14:18
 -- Serverversion: 10.4.8-MariaDB
 -- PHP-version: 7.3.11
 
@@ -21,6 +21,7 @@ SET time_zone = "+00:00";
 --
 -- Databas: `recipe_heaven`
 --
+DROP DATABASE IF EXISTS `recipe_heaven`;
 CREATE DATABASE IF NOT EXISTS `recipe_heaven` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
 USE `recipe_heaven`;
 
@@ -132,7 +133,6 @@ CREATE TABLE `likes` (
 CREATE TABLE `recipes` (
   `id` int(10) UNSIGNED NOT NULL,
   `user_id` int(10) UNSIGNED NOT NULL,
-  `image` varchar(1024) NOT NULL,
   `name` varchar(256) NOT NULL,
   `description` varchar(4096) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
@@ -159,7 +159,6 @@ CREATE TABLE `recipe_info` (
 ,`likes` bigint(21)
 ,`name` varchar(256)
 ,`poster_username` varchar(32)
-,`image` varchar(1024)
 ,`description` varchar(4096)
 );
 
@@ -288,7 +287,7 @@ CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW 
 --
 DROP TABLE IF EXISTS `recipe_info`;
 
-CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `recipe_info`  AS  select `recipes`.`id` AS `recipe_id`,(select count(`likes`.`recipe_id`) from `likes` where `likes`.`recipe_id` = `recipes`.`id`) AS `likes`,`recipes`.`name` AS `name`,`users`.`username` AS `poster_username`,`recipes`.`image` AS `image`,`recipes`.`description` AS `description` from (`recipes` join `users` on(`users`.`id` = `recipes`.`user_id`)) ;
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `recipe_info`  AS  select `recipes`.`id` AS `recipe_id`,(select count(`likes`.`recipe_id`) from `likes` where `likes`.`recipe_id` = `recipes`.`id`) AS `likes`,`recipes`.`name` AS `name`,`users`.`username` AS `poster_username`,`recipes`.`description` AS `description` from (`recipes` join `users` on(`users`.`id` = `recipes`.`user_id`)) ;
 
 -- --------------------------------------------------------
 

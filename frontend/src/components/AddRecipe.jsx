@@ -5,6 +5,9 @@ import AddRecipeInstructions from './AddRecipeInstructions';
 import { postRecipe } from '../logic/APIHelper';
 import { RecipeBuilder } from '../entities/Recipe';
 import { loadImageAsBase64 } from '../logic/ImageHelper';
+import Name from './RecipeName';
+import Description from './RecipeDescription';
+import Image from './RecipeImage';
 
 export default function AddRecipe({ close }) {
 
@@ -19,6 +22,7 @@ export default function AddRecipe({ close }) {
         try {
             const imageAsBase64 = await loadImageAsBase64(selectedFile);
             console.log(imageAsBase64);
+            close();
         } catch (error) {
             console.log('Failed to load image:');
             console.log(error);
@@ -36,49 +40,27 @@ export default function AddRecipe({ close }) {
 
     return (
         <form className="box" onSubmit={(e) => e.preventDefault()}>
-            <div className="field">
-                <label className="label" htmlFor="add-recipe-name">Namn på Rätt</label>
-                <div className="control">
-                    <input className={`input ${name ? 'is-success' : 'is-danger'}`} type="text" id="add-recipe-name" onChange={e => setName(e.target.value)} />
-                </div>
-                <p className={`help ${name ? 'is-hidden' : 'is-danger'}`}>Du måste ange att namn på rätten.</p>
-            </div>
 
-            <div className="field">
-                <label className="label" htmlFor="add-recipe-description">Beskrivning av Rätt</label>
-                <div className="control">
-                    <textarea className={`textarea ${description ? 'is-success' : 'is-danger'}`} id="add-recipe-description" onChange={e => setDescription(e.target.value)}></textarea>
-                </div>
-                <p className={`help ${description ? 'is-hidden' : 'is-danger'}`}>Du måste ange en på rätten.</p>
-            </div>
+            <Name name={name} setName={setName} />
 
-            <div className="field">
-                <label className="label" htmlFor="add-recipe-image">Bild på Rätt</label>
-                <div className="control">
-                    <div className={`file ${selectedFile ? 'is-success' : 'is-danger'}`}>
-                        <label className="file-label">
-                            <input className="file-input" id="add-recipe-image" type="file" accept="image/jpeg" onChange={e => { if (e.target.files.length === 1) setSelectedFile(e.target.files[0]) }} />
-                            <span className="file-cta">
-                                <span className="file-icon">
-                                    <i className="fas fa-upload"></i>
-                                </span>
-                                <span className="file-label">Välj en Fil...</span>
-                            </span>
-                            <span className="file-name">{(selectedFile && selectedFile.name || 'Ingen fil vald')}</span>
-                        </label>
-                    </div>
-                </div>
-                <p className={`help ${selectedFile ? 'is-hidden' : 'is-danger'}`}>Du måste ladda up en bild på rätten.</p>
-            </div>
+            <Description description={description} setDescription={setDescription} />
+
+            <Image selectedFile={selectedFile} setSelectedFile={setSelectedFile} />
 
             <Categories onSelectedChange={selectedCategoryChange} />
 
-            <Ingredients />
+            <Ingredients ingredients={ingredients} addIngredient={ingredient => setIngredients([...ingredients, ingredient])} />
 
             <AddRecipeInstructions />
 
-            <button onClick={() => submit()} className="has-text-weight-bold button is-link">Lägg till Recept</button>
-
+            <div className="field is-grouped">
+                <div className="control">
+                    <button onClick={() => submit()} className="button is-primary">Lägg till Recept</button>
+                </div>
+                <div className="control">
+                    <button onClick={() => close()} className="button is-link is-light">Avbryt</button>
+                </div>
+            </div>
         </form>
     );
 }

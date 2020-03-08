@@ -16,7 +16,7 @@ function App() {
         setCurrentContent(<Home />);
         break;
       case 'recipes':
-        setCurrentContent(<Recipes loggedIn={true} />);
+        setCurrentContent(<Recipes expandRecipe={(id) => setCurrentContent(<p className="box">{`Här ska information om recept med id ${id} stå.`}</p>)} loggedIn={true} />);
         break;
       default:
         setCurrentContent(<Home />);

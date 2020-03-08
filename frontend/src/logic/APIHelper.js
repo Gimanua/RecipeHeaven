@@ -1,14 +1,13 @@
-import { RecipeBuilder, Recipe } from "../entities/Recipe";
 
 /**
  * Posts a recipe to the backend
- * @param {Recipe} recipe The recipe to post
+ * @param {import('../entities/Recipe').Recipe} recipe The recipe to post
  */
 export async function postRecipe(recipe) {
     try{
         recipe.userId = 1;//Tillfällig lösning
         console.log(recipe);
-        const response = await fetch('/recipe', {
+        const response = await fetch('./api/recipe', {
             method: 'POST',
             headers: {
                 token: '91ef227ec4374a488c720dafcd7949cef3ee7738',

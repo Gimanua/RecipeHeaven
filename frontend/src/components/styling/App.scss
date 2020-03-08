@@ -7,3 +7,12 @@
     background-size: cover;
     min-height: 100vh;
 }
+
+main{
+    background-color: rgba(31, 31, 31, 0.452);
+    padding: 1vw;
+
+    button, li, form{
+        margin-bottom: 1vw;
+    }
+}

@@ -9,10 +9,10 @@ import './styling/NavigationBar.scss';
 export default function NavigationBar({ currentPage, onPageChange }) {
     return (
         <nav className="has-text-white">
-            <ul className="columns is-marginless">
-                <li className="column has-text-centered"><button className={"button"} onClick={() => onPageChange('home')}>Hem</button></li>
-                <li className="column has-text-centered"><button className={"button"} onClick={() => onPageChange('recipes')}>Recept</button></li>
-                <li className="column has-text-centered"><button className={"button"} onClick={() => onPageChange('registerAndLogin')}>Registrera & Logga In</button></li>
+            <ul className="columns is-gapless">
+                <li className="column"><button className={`button is-fullwidth is-large${currentPage==='home' ? ' has-text-weight-bold':''}`} onClick={() => onPageChange('home')}>Hem</button></li>
+                <li className="column"><button className={`button is-fullwidth is-large${currentPage==='recipes' ? ' has-text-weight-bold':''}`} onClick={() => onPageChange('recipes')}>Recept</button></li>
+                <li className="column"><button className={`button is-fullwidth is-large${currentPage==='registerAndLogin' ? ' has-text-weight-bold':''}`} onClick={() => onPageChange('registerAndLogin')}>Registrera & Logga In</button></li>
             </ul>
         </nav>
     );

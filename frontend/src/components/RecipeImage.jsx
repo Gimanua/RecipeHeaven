@@ -14,7 +14,7 @@ export default function RecipeImage({ selectedFile, setSelectedFile }) {
                             </span>
                             <span className="file-label">Välj en Fil...</span>
                         </span>
-                        <span className="file-name">{(selectedFile && selectedFile.name || 'Ingen fil vald')}</span>
+                        <span className="file-name">{selectedFile ? selectedFile.name : 'Ingen fil vald'}</span>
                     </label>
                 </div>
             </div>

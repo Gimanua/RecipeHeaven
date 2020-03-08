@@ -3,20 +3,22 @@ import React from 'react';
 /**
  * Component representing a Recipe in its Brief format (Image, name and description.)
  * @param {Object} props The React props Object
- * @param {String} props.image The image source
- * @param {String} props.name The name of the recipe
- * @param {String} props.description The description of the recipe
+ * @param {import('../entities/Recipe').Recipe} props.recipe The recipe to display information about
+ * @param {Function} props.onClick Callback when the recipe is clicked, send the id of the recipe
  */
-export default function BriefRecipe({ image, name, description }) {
+export default function BriefRecipe({ recipe, onClick }) {
     return (
-        <article className="card">
+        <article className="card" onClick={() => onClick(recipe.id)}>
             <div className="card-header">
-                <h2 className="card-header-title">{name}</h2>
+                <h2 className="card-header-title">{recipe.name}</h2>
             </div>
-            <img className="card-image" src={image} alt={name} />
+            <div className="card-image">
+                <figure className="image">
+                    <img src={recipe.image} alt={recipe.name} />
+                </figure>
+            </div>
             <div className="card-content">
-
-                <p>{description}</p>
+                <p>{recipe.description}</p>
             </div>
         </article>
     );

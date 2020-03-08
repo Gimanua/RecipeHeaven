@@ -6,6 +6,8 @@ import { RecipeBuilder, Recipe } from "../entities/Recipe";
  */
 export async function postRecipe(recipe) {
     try{
+        recipe.userId = 1;//Tillfällig lösning
+        console.log(recipe);
         const response = await fetch('/recipe', {
             method: 'POST',
             headers: {

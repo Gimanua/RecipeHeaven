@@ -1,13 +1,13 @@
 import React from 'react';
 import Categories from './Categories';
 import Ingredients from './Ingredients';
-import AddRecipeInstructions from './AddRecipeInstructions';
 import { postRecipe } from '../logic/APIHelper';
 import { RecipeBuilder } from '../entities/Recipe';
 import { loadImageAsBase64 } from '../logic/ImageHelper';
 import Name from './RecipeName';
 import Description from './RecipeDescription';
 import Image from './RecipeImage';
+import Instructions from './Instructions';
 
 export default function AddRecipe({ close }) {
 
@@ -21,7 +21,14 @@ export default function AddRecipe({ close }) {
     async function submit() {
         try {
             const imageAsBase64 = await loadImageAsBase64(selectedFile);
-            console.log(imageAsBase64);
+            const recipeBuilder = new RecipeBuilder()
+                .setName(name)
+                .setDescription(description)
+                .setImage(imageAsBase64)
+                .setCategories(categories)
+                .setIngredients(ingredients)
+                .setInstructions(instructions);
+            postRecipe(recipeBuilder.build());
             close();
         } catch (error) {
             console.log('Failed to load image:');
@@ -51,10 +58,10 @@ export default function AddRecipe({ close }) {
 
             <Ingredients ingredients={ingredients} addIngredient={ingredient => setIngredients([...ingredients, ingredient])} />
 
-            <AddRecipeInstructions />
+            <Instructions instructions={instructions} addInstruction={instruction => setInstructions([...instructions, instruction])} />
 
             <div className="field is-grouped">
-                <div className="control">
+                <div className={`control${name && description && selectedFile && categories.length > 0 && ingredients.length > 0 && instructions.length > 0 ? '' : ' is-hidden'}`}>
                     <button onClick={() => submit()} className="button is-primary">Lägg till Recept</button>
                 </div>
                 <div className="control">

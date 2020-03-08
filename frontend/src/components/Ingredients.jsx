@@ -1,10 +1,9 @@
 import React from 'react';
 import RecipeIngredient from './RecipeIngredient';
 
-export default function Ingredients({ ingredients, addIngredient, removeIngredient }) {
+export default function Ingredients({ ingredients, addIngredient }) {
 
     const [showAddIngredient, setShowAddIngredient] = React.useState(false);
-    console.log(ingredients);
 
     return (
         <>
@@ -15,7 +14,7 @@ export default function Ingredients({ ingredients, addIngredient, removeIngredie
                 </div>
                 <p className={`help ${ingredients.length > 0 ? 'is-hidden' : 'is-danger'}`}>Du måste ange minst en ingrediens.</p>
             </div>
-            <RecipeIngredient active={showAddIngredient} setActive={setShowAddIngredient} addIngredient={ingredient => addIngredient(ingredient)} />
+            {showAddIngredient && <RecipeIngredient close={() => setShowAddIngredient(false)} addIngredient={ingredient => addIngredient(ingredient)} />}
             <div className="content">
                 <ul id="ingredients">
                     {ingredients.map((ingredient, index) => <li key={index}>{`${ingredient.amount}${ingredient.unitAbbreviation} ${ingredient.name}`}</li>)}

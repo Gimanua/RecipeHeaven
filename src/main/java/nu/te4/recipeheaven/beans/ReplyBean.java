@@ -5,6 +5,7 @@
  */
 package nu.te4.recipeheaven.beans;
 
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -27,16 +28,24 @@ public class ReplyBean {
     @EJB
     private UserBean userBean;
     
-    public List<Reply> getReplies(ResultSet replyData) throws SQLException{
-        List<Reply> replies = new LinkedList();
-        while (replyData.next()) {
-            ReplyBuilder builder = new ReplyBuilder()
-                    .commentId(replyData.getInt("comment_id"))
-                    .posterUsername(replyData.getString("poster_username"))
-                    .reply(replyData.getString("reply"));
-            replies.add(builder.build());
+    public List<Reply> getReplies(int commentId) throws SQLException{
+        try(Connection connection = ConnectionFactory.getConnection()){
+            String sql = "SELECT * FROM reply_info WHERE comment_id=?";
+            PreparedStatement stmt = connection.prepareStatement(sql);
+            stmt.setInt(1, commentId);
+            ResultSet data = stmt.executeQuery();
+            List<Reply> replies = new LinkedList();
+            while(data.next()){
+                Reply reply = new ReplyBuilder()
+                        .posterUsername(data.getString("poster_username"))
+                        .reply(data.getString("reply"))
+                        .id(data.getInt("reply_id"))
+                        .commentId(data.getInt("comment_id"))
+                        .build();
+                replies.add(reply);
+            }
+            return replies;
         }
-        return replies;
     }
     
     public Reply postReply(Reply reply, int commentId, String token) throws UnauthorizedException, SQLException{

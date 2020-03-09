@@ -5,20 +5,21 @@
  */
 package nu.te4.recipeheaven.entities;
 
+import java.util.List;
 import javax.validation.constraints.NotEmpty;
-import nu.te4.recipeheaven.building.Rebuildable;
 import nu.te4.recipeheaven.entities.Comment.CommentBuilder;
 
 /**
  *
  * @author Adrian Klasson
  */
-public final class Comment implements Rebuildable<CommentBuilder>{
+public final class Comment {
 
     private Integer commentId;
     @NotEmpty
     private String comment;
     private String posterUsername;
+    private List<Reply> replies;
 
     public Comment(){
         
@@ -28,6 +29,7 @@ public final class Comment implements Rebuildable<CommentBuilder>{
         this.commentId = builder.commentId;
         this.comment = builder.comment;
         this.posterUsername = builder.posterUsername;
+        this.replies = builder.replies;
     }
 
     public void setCommentId(Integer commentId) {
@@ -42,6 +44,10 @@ public final class Comment implements Rebuildable<CommentBuilder>{
         this.posterUsername = posterUsername;
     }
 
+    public void setReplies(List<Reply> replies) {
+        this.replies = replies;
+    }
+
     public Integer getCommentId() {
         return commentId;
     }
@@ -54,12 +60,8 @@ public final class Comment implements Rebuildable<CommentBuilder>{
         return posterUsername;
     }
 
-    @Override
-    public CommentBuilder rebuild() {
-        return new CommentBuilder()
-                .comment(comment)
-                .commentId(commentId)
-                .posterUsername(posterUsername);
+    public List<Reply> getReplies() {
+        return replies;
     }
 
     @Override
@@ -72,6 +74,7 @@ public final class Comment implements Rebuildable<CommentBuilder>{
         private Integer commentId;
         private String comment;
         private String posterUsername;
+        private List<Reply> replies;
         
         public CommentBuilder commentId(Integer commentId){
             this.commentId = commentId;
@@ -85,6 +88,11 @@ public final class Comment implements Rebuildable<CommentBuilder>{
         
         public CommentBuilder posterUsername(String posterUsername){
             this.posterUsername = posterUsername;
+            return this;
+        }
+        
+        public CommentBuilder replies(List<Reply> replies){
+            this.replies = replies;
             return this;
         }
         

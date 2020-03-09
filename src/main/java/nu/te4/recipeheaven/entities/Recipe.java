@@ -8,7 +8,6 @@ package nu.te4.recipeheaven.entities;
 import java.util.List;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
-import nu.te4.recipeheaven.building.Rebuildable;
 import nu.te4.recipeheaven.entities.Recipe.RecipeBuilder;
 
 /**
@@ -16,7 +15,7 @@ import nu.te4.recipeheaven.entities.Recipe.RecipeBuilder;
  * @author Adrian Klasson
  */
 @NotNull
-public final class Recipe implements Rebuildable<RecipeBuilder> {
+public final class Recipe {
 
     private Integer id;
     
@@ -46,8 +45,6 @@ public final class Recipe implements Rebuildable<RecipeBuilder> {
     private List<Instruction> instructions;
     
     private List<Comment> comments;
-    
-    private List<Reply> replies;
 
     public Recipe() {
     }
@@ -64,7 +61,6 @@ public final class Recipe implements Rebuildable<RecipeBuilder> {
         this.ingredients = builder.ingredients;
         this.instructions = builder.instructions;
         this.comments = builder.comments;
-        this.replies = builder.replies;
     }
 
     public void setId(Integer id) {
@@ -111,10 +107,6 @@ public final class Recipe implements Rebuildable<RecipeBuilder> {
         this.comments = comments;
     }
 
-    public void setReplies(List<Reply> replies) {
-        this.replies = replies;
-    }
-
     public Integer getId() {
         return id;
     }
@@ -159,26 +151,6 @@ public final class Recipe implements Rebuildable<RecipeBuilder> {
         return comments;
     }
 
-    public List<Reply> getReplies() {
-        return replies;
-    }
-
-    @Override
-    public RecipeBuilder rebuild() {
-        return new RecipeBuilder()
-                .categories(categories)
-                .comments(comments)
-                .description(description)
-                .id(id)
-                .image(image)
-                .ingredients(ingredients)
-                .instructions(instructions)
-                .likes(likes)
-                .name(name)
-                .posterUsername(posterUsername)
-                .replies(replies);
-    }
-
     @Override
     public String toString() {
         return "Recipe{" + "id=" + id + ", userId=" + userId + ", likes=" + likes + ", name=" + name + ", posterUsername=" + posterUsername + ", image=" + image + ", description=" + description + ", categories=" + categories + ", ingredients=" + ingredients + ", instructions=" + instructions + ", comments=" + comments + ", replies=" + replies + '}';
@@ -197,7 +169,6 @@ public final class Recipe implements Rebuildable<RecipeBuilder> {
         private List<Ingredient> ingredients;
         private List<Instruction> instructions;
         private List<Comment> comments;
-        private List<Reply> replies;
 
         public RecipeBuilder id(Integer id) {
             this.id = id;
@@ -251,11 +222,6 @@ public final class Recipe implements Rebuildable<RecipeBuilder> {
 
         public RecipeBuilder comments(List<Comment> comments) {
             this.comments = comments;
-            return this;
-        }
-
-        public RecipeBuilder replies(List<Reply> replies) {
-            this.replies = replies;
             return this;
         }
 

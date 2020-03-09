@@ -1,4 +1,5 @@
 import React from 'react';
+import './styling/BriefRecipe.scss';
 
 /**
  * Component representing a Recipe in its Brief format (Image, name and description.)

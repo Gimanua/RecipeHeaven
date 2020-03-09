@@ -31,8 +31,7 @@ public class IngredientBean {
                     .amount(ingredientData.getDouble("amount"))
                     .ingredientId(ingredientData.getInt("ingredient_id"))
                     .name(ingredientData.getString("name"))
-                    .unitAbbreviation(ingredientData.getString("unit_abbreviation"))
-                    .unitName(ingredientData.getString("unit_name"));
+                    .unitAbbreviation(ingredientData.getString("unit_abbreviation"));
             ingredients.add(builder.build());
         }
         return ingredients;

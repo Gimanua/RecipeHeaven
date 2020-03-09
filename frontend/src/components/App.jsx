@@ -3,6 +3,8 @@ import Home from './Home';
 import './styling/App.scss';
 import NavigationBar from './NavigationBar';
 import Recipes from './Recipes';
+import { getRecipe } from '../logic/APIHelper';
+import Recipe from './Recipe';
 
 function App() {
 
@@ -16,7 +18,7 @@ function App() {
         setCurrentContent(<Home />);
         break;
       case 'recipes':
-        setCurrentContent(<Recipes expandRecipe={(id) => setCurrentContent(<p className="box">{`Här ska information om recept med id ${id} stå.`}</p>)} loggedIn={true} />);
+        setCurrentContent(<Recipes loggedIn={true} expandRecipe={(id) => getRecipe(id).then(recipe => setCurrentContent(<Recipe loggedIn={true} recipe={recipe} />))} />);
         break;
       default:
         setCurrentContent(<Home />);

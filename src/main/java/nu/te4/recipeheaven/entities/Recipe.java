@@ -153,7 +153,7 @@ public final class Recipe {
 
     @Override
     public String toString() {
-        return "Recipe{" + "id=" + id + ", userId=" + userId + ", likes=" + likes + ", name=" + name + ", posterUsername=" + posterUsername + ", image=" + image + ", description=" + description + ", categories=" + categories + ", ingredients=" + ingredients + ", instructions=" + instructions + ", comments=" + comments + ", replies=" + replies + '}';
+        return "Recipe{" + "id=" + id + ", userId=" + userId + ", likes=" + likes + ", name=" + name + ", posterUsername=" + posterUsername + ", image=" + image + ", description=" + description + ", categories=" + categories + ", ingredients=" + ingredients + ", instructions=" + instructions + ", comments=" + comments + ", replies=" + '}';
     }
 
     public static final class RecipeBuilder {

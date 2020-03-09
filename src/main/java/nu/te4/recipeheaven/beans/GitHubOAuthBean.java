@@ -28,10 +28,15 @@ public class GitHubOAuthBean {
     private static final String CLIENT_SECRET = PropertyBean.getProperty(PropertyBean.GitHubOAuthProperty.CLIENT_SECRET);
     private static final Logger LOGGER = LoggerFactory.getLogger(GitHubOAuthBean.class);
     
-    public String getToken(String code) {
+    public String getToken(String code) throws UnauthorizedException {
         String url = String.format("https://github.com/login/oauth/access_token?client_id=%s&client_secret=%s&code=%s", CLIENT_ID, CLIENT_SECRET, code);
         Client client = ClientBuilder.newClient();
-        String result = client.target(url).request().post(null, String.class);
+        WebTarget target = client.target(url);
+        Response response = target.request().get();
+        String result = response.readEntity(String.class);
+        if(result.startsWith("error")){
+            throw new UnauthorizedException("Unauthorized");
+        }
         LOGGER.debug("Result from GitHub: {}", result);
         return result.substring(13, result.indexOf("&"));
     }

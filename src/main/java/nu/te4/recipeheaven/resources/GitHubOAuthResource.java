@@ -32,11 +32,14 @@ public class GitHubOAuthResource {
     private GitHubOAuthBean gitHubOAuthBean;
     
     @GET
-    @Produces(MediaType.APPLICATION_JSON)
     @Path("token/{code}")
     public Response getToken(@PathParam("code") String code){
-        String token = gitHubOAuthBean.getToken(code);
-        return Response.ok(token).build();
+        try {
+            String token = gitHubOAuthBean.getToken(code);
+            return Response.ok().header("token", token).build();
+        } catch (UnauthorizedException ex) {
+            throw new NotAuthorizedException(Response.status(Response.Status.UNAUTHORIZED).build());
+        }
     }
     
     @GET

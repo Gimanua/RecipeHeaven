@@ -49,24 +49,26 @@ export default function Recipe({ loggedIn, recipe }) {
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-
-                            {comment.replies && 
-                            <ul>
-                                {comment.replies.map((reply, i) => 
-                                    <li className="media box" key={i}>
-                                        <p>{reply.reply}</p>
-                                        <div className="level">
-                                            <div className="level-right">
-                                                <div className="level-item">
-                                                    <p>{reply.posterUsername}</p>
+                                {comment.replies &&
+                                    <ul>
+                                        {comment.replies.map((reply, i) =>
+                                            <li className="media box" key={i}>
+                                                <div className="media-content">
+                                                    <p className="is-block">{reply.reply}</p>
+                                                    <div className="level">
+                                                        <div className="level-left"></div>
+                                                        <div className="level-right">
+                                                            <div className="level-item">
+                                                                <p>{reply.posterUsername}</p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
                                                 </div>
-                                            </div>
-                                        </div>
-                                    </li>
-                                )}
-                            </ul>
-                            }
+                                            </li>
+                                        )}
+                                    </ul>
+                                }
+                            </div>
                         </li>
                     )}
                 </ul>

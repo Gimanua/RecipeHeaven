@@ -54,7 +54,7 @@ export default function AddRecipe({ close }) {
 
             <Image selectedFile={selectedFile} setSelectedFile={setSelectedFile} />
 
-            <Categories onSelectedChange={selectedCategoryChange} />
+            <Categories required={true} onSelectedChange={selectedCategoryChange} />
 
             <Ingredients ingredients={ingredients} addIngredient={ingredient => setIngredients([...ingredients, ingredient])} />
 

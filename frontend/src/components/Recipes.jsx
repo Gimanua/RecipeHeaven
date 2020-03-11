@@ -15,11 +15,31 @@ export default function Recipes({loggedIn, expandRecipe}){
 
     const [showAddRecipe, setShowAddRecipe] = React.useState(false);
     const [briefRecipes, setBriefRecipes] = React.useState([]);
-    React.useEffect(() => {getBriefRecipes().then(recipes => setBriefRecipes(recipes))}, []);
+    const [categoryFilters, setCategoryFilters] = React.useState([]);
+    React.useEffect(() => {
+        getBriefRecipes()
+        .then(recipes => {
+            const filteredRecipes = recipes.filter(recipe => {
+                const categoryIds = recipe.categories.map(category => category.categoryId);
+                return categoryFilters.every(category => categoryIds.includes(category));
+            });
+            setBriefRecipes(filteredRecipes);
+        })
+    }, [categoryFilters]);
+
+    function selectedCategoriesChanged(selectedCategory, checked){
+        const categoryId = selectedCategory.categoryId;
+        if (checked) {
+            setCategoryFilters([...categoryFilters, categoryId])
+        }
+        else {
+            setCategoryFilters(categoryFilters.filter(category => category !== categoryId));
+        }
+    }
 
     return (
         <>
-            <Filter />
+            <Filter onCategoriesChange={selectedCategoriesChanged} />
             {loggedIn && <button onClick={() => setShowAddRecipe(true)} className="button is-fullwidth has-text-weight-semibold is-medium">+ Lägg till ett eget Recept</button>}
             {showAddRecipe && <AddRecipe close={() => setShowAddRecipe(false)} />}
             <ul>

@@ -33,6 +33,23 @@ public class CategoryBean {
         }
         return categories;
     }
+    
+    public List<Category> getCategories(int recipeId) throws SQLException{
+        try(Connection connection = ConnectionFactory.getConnection()){
+            String sql = "SELECT category_id FROM recipe_categories WHERE recipe_id=?";
+            PreparedStatement stmt = connection.prepareStatement(sql);
+            stmt.setInt(1, recipeId);
+            ResultSet categoriesData = stmt.executeQuery();
+            List<Category> categories = new LinkedList();
+            while(categoriesData.next()){
+                Category category = new CategoryBuilder()
+                        .categoryId(categoriesData.getInt("category_id"))
+                        .build();
+                categories.add(category);
+            }
+            return categories;
+        }
+    }
 
     /**
      * Connects some categories to a recipe.

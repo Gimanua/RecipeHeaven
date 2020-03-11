@@ -30,6 +30,10 @@ export function saveToken(token){
     localStorage.setItem('token', token);
 }
 
+export function getToken(){
+    return localStorage.getItem('token');
+}
+
 export function clearToken(){
     localStorage.removeItem('token');
 }
@@ -71,6 +75,7 @@ export async function getRecipe(id){
     } catch (error) {
         console.log(`Failed to get recipe with id ${id}: ${error}`);
     }
+    return fakeRecipes[0];
 }
 
 /**
@@ -87,6 +92,7 @@ export async function getBriefRecipes(){
                 const recipe = new RecipeBuilder()
                     .setId(jsonRecipe.id)
                     .setName(jsonRecipe.name)
+                    .setCategories(jsonRecipe.categories)
                     .setImage(jsonRecipe.image)
                     .setDescription(jsonRecipe.description)
                     .setLikes(jsonRecipe.likes)
@@ -115,7 +121,7 @@ export async function postRecipe(recipe) {
         const response = await fetch('./api/recipe', {
             method: 'POST',
             headers: {
-                token: '91ef227ec4374a488c720dafcd7949cef3ee7738',
+                token: '91ef227ec4374a488c720dafcd7949cef3ee7738', //Tillfällig
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify(recipe)
@@ -130,5 +136,43 @@ export async function postRecipe(recipe) {
         }
     } catch(error){
         console.log(`Failed to send recipe: ${error}`);
+    }
+}
+
+export async function postLike(id, token){
+    try {
+        const response = await fetch(`./api/like/${id}`, {
+            method: 'POST',
+            headers: {
+                token: token
+            }
+        });
+        if(response.status === 201){
+            console.log('Posted like successfully');
+        }
+        else{
+            console.log(`Server responded with status ${response.statusText}`);
+        }
+    } catch (error) {
+        console.log(`Failed to post like: ${error}`);
+    }
+}
+
+export async function postReport(id, token){
+    try {
+        const response = await fetch(`./api/report/${id}`, {
+            method: 'POST',
+            headers: {
+                token: token
+            }
+        });
+        if(response.status === 201){
+            console.log('Posted report successfully');
+        }
+        else{
+            console.log(`Server responded with status ${response.statusText}`);
+        }
+    } catch (error) {
+        console.log(`Failed to post report: ${error}`);
     }
 }

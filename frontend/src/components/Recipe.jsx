@@ -1,4 +1,5 @@
 import React from 'react';
+import { postLike, getToken, postReport } from '../logic/APIHelper';
 
 /**
  * 
@@ -7,31 +8,40 @@ import React from 'react';
  * @param {import('../entities/Recipe').Recipe} props.recipe The recipe to show
  */
 export default function Recipe({ loggedIn, recipe }) {
-    console.log(recipe.comments)
     return (
         <div className="card has-text-centered">
             <div className="card-header">
-                <h2 className="card-header-title">{recipe.name}</h2>
+                <h2 className="card-header-title">
+                    {recipe.name}
+                    {loggedIn && <span className="icon"><i className="fas fa-edit"></i></span>}
+                    {loggedIn && <span className="icon"><i className="fas fa-trash-alt"></i></span>}
+                </h2>
             </div>
             <div className="card-content">
                 <p>{`Receptet är inlagt av användaren: ${recipe.posterUsername}`}</p>
                 <img src={recipe.image} alt={recipe.name} />
                 <p>{recipe.description}</p>
-                <h3 className="subtitle">Kategorier</h3>
-                <ul className="content">
-                    {recipe.categories.map((category, i) => <li key={i}>{category.name}</li>)}
-                </ul>
-                <h3 className="subtitle">Ingredienser</h3>
-                <ul className="content">
-                    {recipe.ingredients.map((ingredient, i) => <li key={i}>{`${ingredient.amount}${ingredient.unitAbbreviation || 'st'} ${ingredient.name}`}</li>)}
-                </ul>
-                <h3 className="subtitle">Tillagning</h3>
-                <ol className="content">
-                    {recipe.instructions.map((instruction, i) => <li key={i}>{instruction.description}</li>)}
-                </ol>
-                <button className="button">Gilla</button>
-                <button className="button">Rapportera olämpligt recept</button>
-                <h3 className="subtitle">Kommentarer</h3>
+                <h3 className="subtitle is-2">Kategorier</h3>
+                <div className="content">
+                    <ul className="is-inline-block has-text-left">
+                        {recipe.categories.map((category, i) => <li key={i}>{category.name}</li>)}
+                    </ul>
+                </div>
+                <h3 className="subtitle is-2">Ingredienser</h3>
+                <div className="content">
+                    <ul className="is-inline-block has-text-left">
+                        {recipe.ingredients.map((ingredient, i) => <li key={i}>{`${ingredient.amount}${ingredient.unitAbbreviation || 'st'} ${ingredient.name}`}</li>)}
+                    </ul>
+                </div>
+                <h3 className="subtitle is-2">Tillagning</h3>
+                <div className="content">
+                    <ol className="is-inline-block has-text-left">
+                        {recipe.instructions.map((instruction, i) => <li key={i}>{instruction.description}</li>)}
+                    </ol>
+                </div>
+                {loggedIn && <button className="button is-large" onClick={() => postLike(recipe.id, getToken())}><i className="fas fa-smile"></i>Gilla</button>}
+                {loggedIn && <button className="button is-large" onClick={() => postReport(recipe.id, getToken())}><i className="fas fa-angry"></i>Rapportera olämpligt recept</button>}
+                <h3 className="subtitle is-2">Kommentarer</h3>
                 <ul>
                     {recipe.comments.map((comment, i) =>
                         <li className="media box" key={i}>
@@ -40,7 +50,7 @@ export default function Recipe({ loggedIn, recipe }) {
                                 <div className="level">
                                     <div className="level-left">
                                         <div className="level-item">
-                                            <button className="button">Svara</button>
+                                            {loggedIn && <button className="button">Svara</button>}
                                         </div>
                                     </div>
                                     <div className="level-right">

@@ -30,7 +30,7 @@ function App() {
         setCurrentContent(<Home />);
         break;
       case 'recipes':
-        setCurrentContent(<Recipes loggedIn={true} expandRecipe={(id) => getRecipe(id).then(recipe => setCurrentContent(<Recipe loggedIn={true} recipe={recipe} />))} />);
+        setCurrentContent(<Recipes loggedIn={loggedIn} expandRecipe={(id) => getRecipe(id).then(recipe => setCurrentContent(<Recipe loggedIn={loggedIn} recipe={recipe} />))} />);
         break;
       default:
         setCurrentContent(<Home />);

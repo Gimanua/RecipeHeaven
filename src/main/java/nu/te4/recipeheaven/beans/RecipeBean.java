@@ -58,14 +58,15 @@ public class RecipeBean {
         try (Connection connection = ConnectionFactory.getConnection()) {
             CallableStatement stmt = connection.prepareCall("{call complete_recipe(?)}");
             stmt.setInt(1, id);
-            if (!stmt.execute()) {
+            ResultSet recipeData = stmt.executeQuery();
+            if (!recipeData.next()) {
                 throw new EntityMissingException("No recipe with id " + id);
             }
 
             RecipeBuilder recipeBuilder = new RecipeBuilder();
             recipeBuilder.id(id);
             recipeBuilder.image("./api/image/" + id);
-            appendRecipeInfo(stmt.getResultSet(), recipeBuilder);
+            appendRecipeInfo(recipeData, recipeBuilder);
 
             stmt.getMoreResults();
             List<Category> categories = categoryBean.getCategories(stmt.getResultSet());
@@ -100,6 +101,7 @@ public class RecipeBean {
                 RecipeBuilder builder = new RecipeBuilder()
                         .id(briefRecipesData.getInt("recipe_id"))
                         .likes(briefRecipesData.getInt("likes"))
+                        .categories(categoryBean.getCategories(briefRecipesData.getInt("recipe_id")))
                         .name(briefRecipesData.getString("name"))
                         .image("./api/image/" + briefRecipesData.getInt("recipe_id"))
                         .posterUsername(briefRecipesData.getString("poster_username"))
@@ -113,7 +115,6 @@ public class RecipeBean {
     }
 
     private RecipeBuilder appendRecipeInfo(ResultSet recipeData, RecipeBuilder builder) throws SQLException {
-        recipeData.next();
         return builder
                 .likes(recipeData.getInt("likes"))
                 .name(recipeData.getString("name"))

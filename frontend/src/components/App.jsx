@@ -3,7 +3,7 @@ import Home from './Home';
 import './styling/App.scss';
 import NavigationBar from './NavigationBar';
 import Recipes from './Recipes';
-import { getRecipe, hasToken, GITHUB_OAUTH_VERIFY, CLIENT_ID, hasCode, getTokenFromBackend, saveToken, getCode, removeCode, clearToken, navigateToGitHub } from '../logic/APIHelper';
+import { getRecipe, hasToken, hasCode, getTokenFromBackend, saveToken, getCode, removeCode, clearToken, navigateToGitHub, login } from '../logic/APIHelper';
 import Recipe from './Recipe';
 
 function App() {
@@ -17,8 +17,16 @@ function App() {
       .then(token => {
         saveToken(token);
         removeCode();
-        setLoggedIn(true);
-        alert('You are now logged in!');
+        return login(token);
+      })
+      .then(loggedIn => {
+        if (loggedIn) {
+          setLoggedIn(true);
+          alert('You are now logged in!');
+        }
+        else {
+          alert('Failed to log in!');
+        }
       })
       .catch(error => console.log(error));
   }
@@ -38,11 +46,11 @@ function App() {
     }
   }
 
-  function logIn(){
+  function logIn() {
     navigateToGitHub();
   }
 
-  function logOut(){
+  function logOut() {
     clearToken();
     setLoggedIn(false);
   }

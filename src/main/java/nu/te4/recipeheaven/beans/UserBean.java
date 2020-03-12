@@ -5,6 +5,7 @@
  */
 package nu.te4.recipeheaven.beans;
 
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -21,17 +22,24 @@ import nu.te4.recipeheaven.exceptions.UnauthorizedException;
  */
 @Stateless
 public class UserBean {
-    
+
     @EJB
     GitHubOAuthBean gitHubOAuthBean;
-    
+
+    public User login(String token) throws SQLException, UnauthorizedException {
+        if (getUser(token) == null) {
+            return postUser(token);
+        }
+        return null;
+    }
+
     public User postUser(String token) throws UnauthorizedException, SQLException {
         JsonObject userInfo = gitHubOAuthBean.getUserInfo(token);
         User user = new User.UserBuilder()
                 .oauthId(userInfo.getInt("id"))
                 .username(userInfo.getString("login"))
                 .build();
-        
+
         String sql = "INSERT INTO users (id, username, oauth_id) VALUES(NULL, ?, ?)";
         PreparedStatement stmt = ConnectionFactory.getConnection().prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS);
         stmt.setString(1, user.getUsername());
@@ -40,22 +48,24 @@ public class UserBean {
         ResultSet keys = stmt.getGeneratedKeys();
         keys.next();
         user.setId(keys.getInt(1));
-        
+
         return user;
     }
-    
-    public User getUser(String token) throws UnauthorizedException, SQLException{
+
+    public User getUser(String token) throws UnauthorizedException, SQLException {
         JsonObject userInfo = gitHubOAuthBean.getUserInfo(token);
         int oAuthId = userInfo.getInt("id");
         String sql = "SELECT * FROM users WHERE oauth_id=?";
         PreparedStatement stmt = ConnectionFactory.getConnection().prepareStatement(sql);
         stmt.setInt(1, oAuthId);
         ResultSet data = stmt.executeQuery();
-        data.next();
-        return new User.UserBuilder()
-                .id(data.getInt("id"))
-                .username(data.getString("username"))
-                .oauthId(data.getInt("oauth_id"))
-                .build();
+        if (data.next()) {
+            return new User.UserBuilder()
+                    .id(data.getInt("id"))
+                    .username(data.getString("username"))
+                    .oauthId(data.getInt("oauth_id"))
+                    .build();
+        }
+        return null;
     }
 }

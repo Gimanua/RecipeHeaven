@@ -57,6 +57,25 @@ export function hasToken(){
     return localStorage.getItem('token');
 }
 
+export async function login(token){
+    try {
+        const response = await fetch('./api/login', {
+            headers: {
+                token: token
+            }
+        });
+        if(response.status === 200 || response.status === 201){
+            return true;
+        }
+        else{
+            console.log(`When trying to log in, server responed with status: ${response.statusText}`);
+        }
+    } catch (error) {
+        console.log(`Error when trying to login: ${error}`)
+    }
+    return false;
+}
+
 /**
  * Gets a recipe with a certain id.
  * @param {Number} id The id of the recipe.

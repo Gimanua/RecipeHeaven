@@ -135,12 +135,12 @@ export async function getBriefRecipes(){
  */
 export async function postRecipe(recipe) {
     try{
-        recipe.userId = 1;//Tillfällig lösning
+        recipe.userId = 1;//Tillfällig lösning, backend kräver felaktikgt userId.
         console.log(recipe);
         const response = await fetch('./api/recipe', {
             method: 'POST',
             headers: {
-                token: '91ef227ec4374a488c720dafcd7949cef3ee7738', //Tillfällig
+                token: getToken(),
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify(recipe)

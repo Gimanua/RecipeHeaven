@@ -7,8 +7,14 @@ import { getRecipe, hasToken, hasCode, getTokenFromBackend, saveToken, getCode, 
 import Recipe from './Recipe';
 
 function App() {
-
+  //Detta är ett anti-pattern. Det är dåligt att spara faktiskta react-komponenter i state.
+  //Anledningen är att props som du skickar in fixeras vid tillfället då du lägger in 
+  //komponenten i state, och det riskerar då att hamna i osynk när denna komponent renderas om
+  //Som du märker så funkar det ofta, men kan leda som sagt leda till buggar där komponeter inte
+  //uppdateras som man förväntar sig...
   const [currentContent, setCurrentContent] = React.useState(<Home />);
+
+  //...bättre att använda state som detta för att avgöra vad som skall renderas
   const [currentPage, setCurrentPage] = React.useState('home');
   const [loggedIn, setLoggedIn] = React.useState(hasToken());
 
